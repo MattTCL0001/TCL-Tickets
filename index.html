@@ -114,8 +114,8 @@
             display: inline-flex; align-items: center; gap: 4px;
             padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
         }
-        .badge-etat.utilisable { background: #e8f5e9; color: #2e7d32; }
-        .badge-etat.mort       { background: #f0f0f0; color: #777; }
+        .badge-etat.ok  { background: #e8f5e9; color: #2e7d32; }
+        .badge-etat.ko  { background: #fce8eb; color: #b50015; }
 
         .btn-edit {
             background: transparent; border: 0.5px solid #ccd3e0; color: #4a5568;
@@ -182,9 +182,6 @@
         }
         .toggle-group label:not(:last-child) { border-right: 0.5px solid #ccd3e0; }
 
-        /* État */
-        #eUtilisable:checked + label { background: #e8f5e9; color: #2e7d32; }
-        #eMort:checked       + label { background: #f0f0f0; color: #555; }
         /* Fonctionnel */
         #fOui:checked + label { background: #e8f5e9; color: #2e7d32; }
         #fNon:checked + label { background: #fce8eb; color: #b50015; }
@@ -197,7 +194,7 @@
         <svg viewBox="0 0 804 398" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
             <g transform="matrix(1,0,0,1,-1185.232032,-1281.990164)">
                 <g transform="matrix(0,1,-2.243502,0,3848.40344,315.149584)">
-                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z" style="fill:rgba(255,255,255,0.15);"/>
+                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z" style="fill:black;"/>
                 </g>
                 <g transform="matrix(0.173485,0,0,0.173433,712.57317,1394.882698)">
                     <path d="M5373,234L5384,390L4904,391C4847,391 4801,436 4801,493C4802,552 4848,598 4905,598L5385,597L5374,754C5287,895 5132,988 4953,988C4682,988 4460,767 4460,493C4460,444 4468,395 4482,350L4327,350L4328,954L3936,954L3935,350L3698,350L3698,35L4564,35L4564,190C4654,74 4795,0 4953,0C5132,0 5287,93 5373,234ZM5374,754L5615,494L5373,234L5373,35L5782,35L5783,623L6137,623L6138,953L5374,954L5374,754Z" style="fill:white;"/>
@@ -220,7 +217,7 @@
                 <tr>
                     <th>ID complet</th><th>Suffixe</th><th>Format</th>
                     <th>Contenu</th><th>Zones</th><th>Qté</th>
-                    <th>Emprunteur</th><th>État</th><th>Fonctionnel</th><th></th>
+                    <th>Emprunteur</th><th>Fonctionnel</th><th></th>
                 </tr>
             </thead>
             <tbody id="ticketBody"></tbody>
@@ -306,24 +303,13 @@
             </div>
         </div>
 
-        <div class="row-2col">
-            <div class="form-group">
-                <label class="form-label-sm">État</label>
-                <div class="toggle-group">
-                    <input type="radio" name="mEtat" id="eUtilisable" value="utilisable">
-                    <label for="eUtilisable"><i class="ti ti-check"></i> Utilisable</label>
-                    <input type="radio" name="mEtat" id="eMort" value="mort">
-                    <label for="eMort"><i class="ti ti-skull"></i> Mort</label>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label-sm">Fonctionnel</label>
-                <div class="toggle-group">
-                    <input type="radio" name="mFonctionnel" id="fOui" value="oui">
-                    <label for="fOui"><i class="ti ti-check"></i> Oui</label>
-                    <input type="radio" name="mFonctionnel" id="fNon" value="non">
-                    <label for="fNon"><i class="ti ti-x"></i> Non</label>
-                </div>
+        <div class="form-group">
+            <label class="form-label-sm">Fonctionnel</label>
+            <div class="toggle-group">
+                <input type="radio" name="mFonctionnel" id="fOui" value="oui">
+                <label for="fOui"><i class="ti ti-check"></i> Fonctionnel</label>
+                <input type="radio" name="mFonctionnel" id="fNon" value="non">
+                <label for="fNon"><i class="ti ti-x"></i> Non fonctionnel</label>
             </div>
         </div>
 
@@ -399,32 +385,10 @@
         document.getElementById('mSuffixeDisplay').textContent = s || '—';
     }
 
-    /* ── Logique "Mort" et "Vide" ────────────────────────── */
-    function setMortMode(isMort) {
-        const contenu = document.getElementById('mContenu');
-        const zones   = document.getElementById('mZones');
-        const qte     = document.getElementById('mQte');
-        if (isMort) {
-            contenu.value    = '—'; contenu.disabled = true;
-            zones.value      = '—'; zones.disabled   = true;
-            qte.value        = '0'; qte.disabled     = true;
-        } else {
-            contenu.disabled = false;
-            // Ne débloquer Zones/Qté que si Contenu n'est pas Vide
-            const isVide = contenu.value === 'Vide';
-            zones.disabled = isVide;
-            qte.disabled   = isVide;
-            if (contenu.value === '—') contenu.value = '';
-            if (zones.value   === '—') zones.value   = '';
-        }
-    }
-
+    /* ── Logique "Vide" ─────────────────────────────────── */
     function setVideMode(isVide) {
         const zones = document.getElementById('mZones');
         const qte   = document.getElementById('mQte');
-        // Pas de logique Vide si Mort est actif
-        const isMort = document.querySelector('input[name="mEtat"]:checked')?.value === 'mort';
-        if (isMort) return;
         if (isVide) {
             zones.value = '—'; zones.disabled = true;
             qte.value   = '0'; qte.disabled   = true;
@@ -438,10 +402,6 @@
     document.getElementById('mContenu').addEventListener('change', function() {
         setVideMode(this.value === 'Vide');
     });
-
-    document.querySelectorAll('input[name="mEtat"]').forEach(r => r.addEventListener('change', function() {
-        setMortMode(this.value === 'mort');
-    }));
 
     /* ── Modal ───────────────────────────────────────────── */
     function resetModal() {
@@ -457,9 +417,7 @@
         document.getElementById('mZones').value = '';
         document.getElementById('mQte').value = '';
         document.getElementById('mEmp').value = '';
-        document.querySelectorAll('input[name="mEtat"]').forEach(r => r.checked = false);
         document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
-        // Débloquer tout
         ['mContenu','mZones','mQte'].forEach(id => document.getElementById(id).disabled = false);
     }
 
@@ -482,17 +440,11 @@
             document.getElementById('mSuffixeDisplay').textContent = t.suffixe || '—';
             document.getElementById('mFormat').value = t.format;
             document.getElementById('mEmp').value = t.emprunteur === '—' ? '' : (t.emprunteur || '');
-            if (t.etat) { const r = document.querySelector(`input[name="mEtat"][value="${t.etat}"]`); if(r) r.checked = true; }
             if (t.fonctionnel) { const r = document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`); if(r) r.checked = true; }
-
-            if (t.etat === 'mort') {
-                setMortMode(true);
-            } else {
-                document.getElementById('mContenu').value = t.contenu;
-                document.getElementById('mZones').value   = t.zones;
-                document.getElementById('mQte').value     = t.quantite;
-                setVideMode(t.contenu === 'Vide');
-            }
+            document.getElementById('mContenu').value = t.contenu;
+            document.getElementById('mZones').value   = t.zones;
+            document.getElementById('mQte').value     = t.quantite;
+            setVideMode(t.contenu === 'Vide');
         }
         document.getElementById('myModal').classList.add('open');
     }
@@ -508,20 +460,17 @@
             return;
         }
         const index      = parseInt(document.getElementById('editIndex').value);
-        const etat       = document.querySelector('input[name="mEtat"]:checked')?.value || '';
-        const fonctionnel= document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
-        const empRaw     = document.getElementById('mEmp').value.trim();
-        const isMort     = etat === 'mort';
+        const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
+        const empRaw      = document.getElementById('mEmp').value.trim();
 
         const ticket = {
             id:          document.getElementById('mId').value,
             suffixe:     document.getElementById('mSuffixe').value,
             format:      document.getElementById('mFormat').value,
-            contenu:     isMort ? '—' : document.getElementById('mContenu').value,
-            zones:       isMort ? '—' : document.getElementById('mZones').value,
-            quantite:    isMort ? '0' : document.getElementById('mQte').value,
+            contenu:     document.getElementById('mContenu').value,
+            zones:       document.getElementById('mZones').value,
+            quantite:    document.getElementById('mQte').value,
             emprunteur:  empRaw === '' ? '—' : empRaw,
-            etat:        etat,
             fonctionnel: fonctionnel
         };
 
@@ -545,15 +494,9 @@
         return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
     }
 
-    function etatBadge(val) {
-        if (val === 'utilisable') return `<span class="badge-etat utilisable"><i class="ti ti-check"></i> Utilisable</span>`;
-        if (val === 'mort')       return `<span class="badge-etat mort"><i class="ti ti-skull"></i> Mort</span>`;
-        return `<span style="color:#bbb;font-size:12px">—</span>`;
-    }
-
     function fonctionnelBadge(val) {
-        if (val === 'oui') return `<span class="badge-etat utilisable"><i class="ti ti-check"></i> Oui</span>`;
-        if (val === 'non') return `<span class="badge-etat" style="background:#fce8eb;color:#b50015"><i class="ti ti-x"></i> Non</span>`;
+        if (val === 'oui') return `<span class="badge-etat ok"><i class="ti ti-check"></i> Fonctionnel</span>`;
+        if (val === 'non') return `<span class="badge-etat ko"><i class="ti ti-x"></i> Non fonctionnel</span>`;
         return `<span style="color:#bbb;font-size:12px">—</span>`;
     }
 
@@ -561,14 +504,14 @@
         const tbody    = document.getElementById('ticketBody');
         const empty    = document.getElementById('emptyState');
         const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
-        const nbUtil   = tickets.filter(t => t.etat === 'utilisable').length;
-        const nbMort   = tickets.filter(t => t.etat === 'mort').length;
+        const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
+        const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
 
         document.getElementById('statsBar').innerHTML = `
             <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
             <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
-            <div class="stat-card"><div class="label">Utilisables</div><div class="value" style="color:#2e7d32">${nbUtil}</div></div>
-            <div class="stat-card"><div class="label">Morts</div><div class="value" style="color:#888">${nbMort}</div></div>
+            <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
+            <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
         `;
 
         if (tickets.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
@@ -589,7 +532,6 @@
                             : `<span style="color:#bbb">—</span>`}
                     </div>
                 </td>
-                <td>${etatBadge(t.etat)}</td>
                 <td>${fonctionnelBadge(t.fonctionnel)}</td>
                 <td><button class="btn-edit" onclick="ouvrirModal(${i})"><i class="ti ti-edit"></i> Éditer</button></td>
             </tr>
