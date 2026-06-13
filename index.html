@@ -163,8 +163,63 @@
             border-radius: 8px; border: 0.5px solid #ccd3e0;
             font-size: 0.875rem; padding: 0.55rem 0.85rem; color: #1a1a2e;
         }
-        input.form-control:focus, select.form-select:focus { border-color: var(--tcl-red); box-shadow: 0 0 0 3px rgba(226,0,26,0.1); }
-        input.form-control:disabled, select.form-select:disabled { background: #f4f4f4; color: #aaa; cursor: not-allowed; }
+        input.form-control:focus { border-color: var(--tcl-red); box-shadow: 0 0 0 3px rgba(226,0,26,0.1); }
+        input.form-control:disabled { background: #f4f4f4; color: #aaa; cursor: not-allowed; }
+
+        /* ── Dropdown custom ── */
+        .custom-select-wrap { position: relative; }
+
+        .custom-select-btn {
+            width: 100%;
+            border: 0.5px solid #ccd3e0;
+            border-radius: 8px;
+            padding: 0.55rem 2.2rem 0.55rem 0.85rem;
+            font-size: 0.875rem;
+            color: #1a1a2e;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            transition: border-color 0.15s;
+            user-select: none;
+            min-height: 36px;
+        }
+        .custom-select-btn:focus { outline: none; border-color: var(--tcl-red); box-shadow: 0 0 0 3px rgba(226,0,26,0.1); }
+        .custom-select-btn.placeholder { color: #9aa5be; }
+        .custom-select-btn .chevron { font-size: 14px; color: #9aa5be; flex-shrink: 0; transition: transform 0.2s; }
+        .custom-select-btn.open .chevron { transform: rotate(180deg); }
+        .custom-select-btn.disabled-field { background: #f4f4f4; color: #aaa; cursor: not-allowed; pointer-events: none; }
+
+        .custom-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0; right: 0;
+            background: white;
+            border: 0.5px solid #dde3ee;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            z-index: 2000;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+            padding: 4px;
+        }
+        .custom-dropdown.open { display: block; }
+
+        .custom-dropdown-item {
+            padding: 0.5rem 0.85rem;
+            font-size: 0.875rem;
+            border-radius: 7px;
+            cursor: pointer;
+            color: #1a1a2e;
+            transition: background 0.1s;
+        }
+        .custom-dropdown-item:hover { background: #f4f6fa; }
+        .custom-dropdown-item.selected { background: var(--tcl-red-light); color: var(--tcl-red-dark); font-weight: 600; }
+        .custom-dropdown-item.placeholder-item { color: #9aa5be; font-style: italic; }
 
         .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
@@ -194,7 +249,7 @@
         <svg viewBox="0 0 804 398" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
             <g transform="matrix(1,0,0,1,-1185.232032,-1281.990164)">
                 <g transform="matrix(0,1,-2.243502,0,3848.40344,315.149584)">
-                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z" style="fill:black;"/>
+                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z" style="fill:rgba(255,255,255,0.15);"/>
                 </g>
                 <g transform="matrix(0.173485,0,0,0.173433,712.57317,1394.882698)">
                     <path d="M5373,234L5384,390L4904,391C4847,391 4801,436 4801,493C4802,552 4848,598 4905,598L5385,597L5374,754C5287,895 5132,988 4953,988C4682,988 4460,767 4460,493C4460,444 4468,395 4482,350L4327,350L4328,954L3936,954L3935,350L3698,350L3698,35L4564,35L4564,190C4654,74 4795,0 4953,0C5132,0 5287,93 5373,234ZM5374,754L5615,494L5373,234L5373,35L5782,35L5783,623L6137,623L6138,953L5374,954L5374,754Z" style="fill:white;"/>
@@ -260,36 +315,76 @@
         <div class="row-2col">
             <div class="form-group">
                 <label class="form-label-sm">Format</label>
-                <select id="mFormat" class="form-select">
-                    <option value="" disabled selected>Sélectionner…</option>
-                    <option>DAB</option><option>Rose Bus</option><option>Bleu Bus</option>
-                    <option>Orange Bus</option><option>Vert Bus</option><option>Agence</option>
-                    <option>Paris 2024</option><option>Rectangle</option>
-                </select>
+                <div class="custom-select-wrap" id="wrapFormat">
+                    <button type="button" class="custom-select-btn placeholder" id="btnFormat" onclick="toggleDropdown('Format')">
+                        <span id="lblFormat">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
+                    </button>
+                    <div class="custom-dropdown" id="dropFormat">
+                        <div class="custom-dropdown-item placeholder-item" onclick="selectOption('Format','')">Sélectionner…</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','DAB')">DAB</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rose Bus')">Rose Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Bleu Bus')">Bleu Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Orange Bus')">Orange Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Vert Bus')">Vert Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Agence')">Agence</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Paris 2024')">Paris 2024</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rectangle')">Rectangle</div>
+                    </div>
+                    <input type="hidden" id="mFormat">
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-label-sm">Zones</label>
-                <select id="mZones" class="form-select">
-                    <option value="" disabled selected>Sélectionner…</option>
-                    <option>Z1 &amp; 2</option><option>Z2 &amp; 3</option><option>Z3 &amp; 4</option><option>Z4 &amp; 5</option>
-                    <option>Z2 &amp; EXT</option><option>Z3 &amp; EXT</option><option>Z4 &amp; EXT</option><option>Z5 &amp; EXT</option>
-                    <option>Toutes zones sauf Z1</option><option>Toutes zones</option>
-                </select>
+                <div class="custom-select-wrap" id="wrapZones">
+                    <button type="button" class="custom-select-btn placeholder" id="btnZones" onclick="toggleDropdown('Zones')">
+                        <span id="lblZones">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
+                    </button>
+                    <div class="custom-dropdown" id="dropZones">
+                        <div class="custom-dropdown-item placeholder-item" onclick="selectOption('Zones','')">Sélectionner…</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z1 & 2')">Z1 &amp; 2</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & 3')">Z2 &amp; 3</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & 4')">Z3 &amp; 4</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & 5')">Z4 &amp; 5</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & EXT')">Z2 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & EXT')">Z3 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & EXT')">Z4 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z5 & EXT')">Z5 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones sauf Z1')">Toutes zones sauf Z1</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones')">Toutes zones</div>
+                    </div>
+                    <input type="hidden" id="mZones">
+                </div>
             </div>
         </div>
 
         <div class="form-group">
             <label class="form-label-sm">Contenu</label>
-            <select id="mContenu" class="form-select">
-                <option value="" disabled selected>Sélectionner…</option>
-                <option>Vide</option>
-                <option>1 voyage</option><option>1 voyage à bord</option><option>10 voyages</option>
-                <option>10 voyages (-26 ans/étudiants)</option><option>10 voyages famille nombreuse</option>
-                <option>Pass 24h</option><option>Pass 48h</option><option>Pass 72h</option><option>Pass 7 jours</option>
-                <option>Pass tribu</option><option>Groupe 10 personnes</option><option>Aller simple Navigône</option>
-                <option>Aller-retour Navigône</option><option>Aller-retour Funiculaire</option>
-                <option>Pass TCL en fête</option><option>Pass Pic Pollution</option>
-            </select>
+            <div class="custom-select-wrap" id="wrapContenu">
+                <button type="button" class="custom-select-btn placeholder" id="btnContenu" onclick="toggleDropdown('Contenu')">
+                    <span id="lblContenu">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
+                </button>
+                <div class="custom-dropdown" id="dropContenu">
+                    <div class="custom-dropdown-item placeholder-item" onclick="selectOption('Contenu','')">Sélectionner…</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Vide')">Vide</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage')">1 voyage</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage à bord')">1 voyage à bord</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages')">10 voyages</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages (-26 ans/étudiants)')">10 voyages (-26 ans/étudiants)</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages famille nombreuse')">10 voyages famille nombreuse</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 24h')">Pass 24h</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 48h')">Pass 48h</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 72h')">Pass 72h</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 7 jours')">Pass 7 jours</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass tribu')">Pass tribu</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Groupe 10 personnes')">Groupe 10 personnes</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller simple Navigône')">Aller simple Navigône</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Navigône')">Aller-retour Navigône</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Funiculaire')">Aller-retour Funiculaire</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass TCL en fête')">Pass TCL en fête</div>
+                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass Pic Pollution')">Pass Pic Pollution</div>
+                </div>
+                <input type="hidden" id="mContenu">
+            </div>
         </div>
 
         <div class="row-2col">
@@ -327,6 +422,320 @@
     const VAR_LEN  = 12;
 
     let tickets = [];
+
+    /* ── Sync npoint ─────────────────────────────────────── */
+    function setSync(state, msg) {
+        const el = document.getElementById('syncStatus');
+        const icons = { idle:'ti-cloud', saving:'ti-cloud-upload', ok:'ti-cloud-check', error:'ti-cloud-x' };
+        el.className = `sync-status ${state}`;
+        el.innerHTML = `<i class="ti ${icons[state]}"></i> <span>${msg}</span>`;
+    }
+
+    async function charger() {
+        setSync('saving', 'Chargement…');
+        try {
+            const r = await fetch(API_URL);
+            if (!r.ok) throw new Error(r.status);
+            const json = await r.json();
+            tickets = Array.isArray(json) ? json : (json.data || []);
+            localStorage.setItem('mesTickets', JSON.stringify(tickets));
+            setSync('ok', 'Synchronisé');
+        } catch(e) {
+            tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
+            setSync('error', 'Hors ligne');
+        }
+        render();
+    }
+
+    async function sauvegarderAPI() {
+        setSync('saving', 'Sauvegarde…');
+        localStorage.setItem('mesTickets', JSON.stringify(tickets));
+        try {
+            const r = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(tickets)
+            });
+            if (!r.ok) throw new Error(r.status);
+            setSync('ok', 'Synchronisé');
+        } catch(e) {
+            setSync('error', 'Erreur sync');
+        }
+    }
+
+    /* ── Dropdowns custom ────────────────────────────────── */
+    // Ferme tous les dropdowns ouverts
+    function closeAllDropdowns(except) {
+        ['Format','Zones','Contenu'].forEach(name => {
+            if (name === except) return;
+            document.getElementById('drop'+name)?.classList.remove('open');
+            document.getElementById('btn'+name)?.classList.remove('open');
+        });
+    }
+
+    function toggleDropdown(name) {
+        const btn  = document.getElementById('btn'+name);
+        const drop = document.getElementById('drop'+name);
+        if (btn.classList.contains('disabled-field')) return;
+        const isOpen = drop.classList.contains('open');
+        closeAllDropdowns(null);
+        if (!isOpen) { drop.classList.add('open'); btn.classList.add('open'); }
+    }
+
+    function selectOption(name, value) {
+        const lbl  = document.getElementById('lbl'+name);
+        const btn  = document.getElementById('btn'+name);
+        const inp  = document.getElementById('m'+name);
+        const drop = document.getElementById('drop'+name);
+
+        inp.value = value;
+        lbl.textContent = value || 'Sélectionner…';
+        btn.classList.toggle('placeholder', !value);
+
+        // Marquer l'item sélectionné
+        drop.querySelectorAll('.custom-dropdown-item').forEach(el => {
+            el.classList.toggle('selected', el.textContent.trim() === value && value !== '');
+        });
+
+        drop.classList.remove('open');
+        btn.classList.remove('open');
+
+        // Logiques liées
+        if (name === 'Contenu') setVideMode(value === 'Vide');
+    }
+
+    function setDropdownValue(name, value) {
+        selectOption(name, value);
+    }
+
+    function setDropdownDisabled(name, disabled, displayValue) {
+        const btn = document.getElementById('btn'+name);
+        const inp = document.getElementById('m'+name);
+        const lbl = document.getElementById('lbl'+name);
+        if (disabled) {
+            btn.classList.add('disabled-field');
+            inp.value = displayValue ?? '—';
+            lbl.textContent = displayValue ?? '—';
+            btn.classList.remove('placeholder');
+            document.getElementById('drop'+name).classList.remove('open');
+            btn.classList.remove('open');
+        } else {
+            btn.classList.remove('disabled-field');
+        }
+    }
+
+    // Fermer dropdowns si clic ailleurs
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-wrap')) closeAllDropdowns(null);
+    });
+
+    /* ── Logique champ ID ────────────────────────────────── */
+    function onIdInput(el) {
+        el.value = el.value.replace(/[^0-9]/g, '').slice(0, VAR_LEN);
+        const n = el.value.length;
+        document.getElementById('idCounter').textContent = `(${n}/${VAR_LEN} chiffres)`;
+        const err = n > 0 && n < VAR_LEN;
+        document.getElementById('idError').style.display = err ? 'block' : 'none';
+        document.getElementById('idWrapper').style.borderColor = err ? 'var(--tcl-red)' : '#ccd3e0';
+        const full = PREFIX + el.value;
+        document.getElementById('mId').value = full;
+        const s = full.length >= 23 ? full.slice(17, 23) : (full.length > 17 ? full.slice(17) : '');
+        document.getElementById('mSuffixe').value = s;
+        document.getElementById('mSuffixeDisplay').textContent = s || '—';
+    }
+
+    /* ── Logique "Vide" ─────────────────────────────────── */
+    function setVideMode(isVide) {
+        const isNonFonc = document.querySelector('input[name="mFonctionnel"]:checked')?.value === 'non';
+        if (isNonFonc) return; // Non fonctionnel a priorité
+        if (isVide) {
+            setDropdownDisabled('Zones', true, '—');
+            document.getElementById('mQte').value = '0';
+            document.getElementById('mQte').disabled = true;
+        } else {
+            setDropdownDisabled('Zones', false);
+            setDropdownValue('Zones', '');
+            document.getElementById('mQte').disabled = false;
+            if (document.getElementById('mQte').value === '0') document.getElementById('mQte').value = '';
+        }
+    }
+
+    /* ── Logique "Non fonctionnel" ───────────────────────── */
+    function setNonFoncMode(isNon) {
+        if (isNon) {
+            setDropdownDisabled('Contenu', true, '—');
+            setDropdownDisabled('Zones',   true, '—');
+            document.getElementById('mQte').value = '—';
+            document.getElementById('mQte').disabled = true;
+        } else {
+            setDropdownDisabled('Contenu', false);
+            setDropdownValue('Contenu', '');
+            setDropdownDisabled('Zones', false);
+            setDropdownValue('Zones', '');
+            document.getElementById('mQte').disabled = false;
+            document.getElementById('mQte').value = '';
+        }
+    }
+
+    document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.addEventListener('change', function() {
+        setNonFoncMode(this.value === 'non');
+    }));
+
+    /* ── Modal ───────────────────────────────────────────── */
+    function resetModal() {
+        document.getElementById('mIdSuffix').value = '';
+        document.getElementById('mId').value = '';
+        document.getElementById('idCounter').textContent = `(0/${VAR_LEN} chiffres)`;
+        document.getElementById('mSuffixe').value = '';
+        document.getElementById('mSuffixeDisplay').textContent = '—';
+        document.getElementById('idError').style.display = 'none';
+        document.getElementById('idWrapper').style.borderColor = '#ccd3e0';
+        document.getElementById('mQte').value = '';
+        document.getElementById('mQte').disabled = false;
+        document.getElementById('mEmp').value = '';
+        document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
+        setDropdownDisabled('Contenu', false); setDropdownValue('Contenu', '');
+        setDropdownDisabled('Zones',   false); setDropdownValue('Zones',   '');
+        setDropdownValue('Format', '');
+        closeAllDropdowns(null);
+    }
+
+    function ouvrirModal(index = -1) {
+        document.getElementById('editIndex').value = index;
+        document.getElementById('btnSupp').style.display = index === -1 ? 'none' : 'inline-flex';
+        document.getElementById('modalTitle').innerHTML = index === -1
+            ? '<i class="ti ti-ticket"></i> Nouveau ticket'
+            : '<i class="ti ti-edit"></i> Modifier le ticket';
+
+        resetModal();
+
+        if (index !== -1) {
+            const t = tickets[index];
+            const varPart = t.id.startsWith(PREFIX) ? t.id.slice(PREFIX.length) : t.id;
+            document.getElementById('mIdSuffix').value = varPart;
+            document.getElementById('mId').value = t.id;
+            document.getElementById('idCounter').textContent = `(${varPart.length}/${VAR_LEN} chiffres)`;
+            document.getElementById('mSuffixe').value = t.suffixe;
+            document.getElementById('mSuffixeDisplay').textContent = t.suffixe || '—';
+            setDropdownValue('Format', t.format || '');
+            document.getElementById('mEmp').value = t.emprunteur === '—' ? '' : (t.emprunteur || '');
+
+            const isNon = t.fonctionnel === 'non';
+            if (t.fonctionnel) {
+                const r = document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`);
+                if (r) r.checked = true;
+            }
+
+            if (isNon) {
+                setNonFoncMode(true);
+            } else {
+                setDropdownValue('Contenu', t.contenu || '');
+                setDropdownValue('Zones',   t.zones   || '');
+                document.getElementById('mQte').value = t.quantite || '';
+                setVideMode(t.contenu === 'Vide');
+            }
+        }
+        document.getElementById('myModal').classList.add('open');
+    }
+
+    function fermerModal() {
+        document.getElementById('myModal').classList.remove('open');
+        closeAllDropdowns(null);
+    }
+
+    /* ── Sauvegarde / Suppression ────────────────────────── */
+    function sauvegarder() {
+        const varPart = document.getElementById('mIdSuffix').value;
+        if (varPart.length !== VAR_LEN) {
+            document.getElementById('idError').style.display = 'block';
+            document.getElementById('idWrapper').style.borderColor = 'var(--tcl-red)';
+            return;
+        }
+        const index       = parseInt(document.getElementById('editIndex').value);
+        const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
+        const empRaw      = document.getElementById('mEmp').value.trim();
+        const isNon       = fonctionnel === 'non';
+
+        const ticket = {
+            id:          document.getElementById('mId').value,
+            suffixe:     document.getElementById('mSuffixe').value,
+            format:      document.getElementById('mFormat').value,
+            contenu:     isNon ? '—' : document.getElementById('mContenu').value,
+            zones:       isNon ? '—' : document.getElementById('mZones').value,
+            quantite:    isNon ? '—' : document.getElementById('mQte').value,
+            emprunteur:  empRaw === '' ? '—' : empRaw,
+            fonctionnel: fonctionnel
+        };
+
+        if (index === -1) tickets.push(ticket); else tickets[index] = ticket;
+        sauvegarderAPI();
+        fermerModal();
+        render();
+    }
+
+    function supprimer() {
+        const index = parseInt(document.getElementById('editIndex').value);
+        tickets.splice(index, 1);
+        sauvegarderAPI();
+        fermerModal();
+        render();
+    }
+
+    /* ── Render ──────────────────────────────────────────── */
+    function initials(name) {
+        if (!name || name === '—') return '—';
+        return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+    }
+
+    function fonctionnelBadge(val) {
+        if (val === 'oui') return `<span class="badge-etat ok"><i class="ti ti-check"></i> Fonctionnel</span>`;
+        if (val === 'non') return `<span class="badge-etat ko"><i class="ti ti-x"></i> Non fonctionnel</span>`;
+        return `<span style="color:#bbb;font-size:12px">—</span>`;
+    }
+
+    function render() {
+        const tbody    = document.getElementById('ticketBody');
+        const empty    = document.getElementById('emptyState');
+        const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
+        const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
+        const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
+
+        document.getElementById('statsBar').innerHTML = `
+            <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
+            <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
+            <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
+            <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
+        `;
+
+        if (tickets.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+        empty.style.display = 'none';
+
+        tbody.innerHTML = tickets.map((t, i) => `
+            <tr>
+                <td style="font-family:monospace;font-weight:600;color:var(--tcl-red)">${t.id || '—'}</td>
+                <td style="font-family:monospace;color:#6b7a99">${t.suffixe || '—'}</td>
+                <td><span class="badge-format">${t.format || '—'}</span></td>
+                <td style="color:#2d3748">${t.contenu || '—'}</td>
+                <td>${t.zones && t.zones !== '—' ? `<span class="badge-zones">${t.zones}</span>` : '<span style="color:#bbb">—</span>'}</td>
+                <td style="font-weight:600;text-align:center">${t.quantite || '—'}</td>
+                <td>
+                    <div class="emprunteur-cell">
+                        ${t.emprunteur && t.emprunteur !== '—'
+                            ? `<div class="emp-avatar">${initials(t.emprunteur)}</div><span style="color:#4a5568">${t.emprunteur}</span>`
+                            : `<span style="color:#bbb">—</span>`}
+                    </div>
+                </td>
+                <td>${fonctionnelBadge(t.fonctionnel)}</td>
+                <td><button class="btn-edit" onclick="ouvrirModal(${i})"><i class="ti ti-edit"></i> Éditer</button></td>
+            </tr>
+        `).join('');
+    }
+
+    document.getElementById('myModal').addEventListener('click', function(e) {
+        if (e.target === this) fermerModal();
+    });
+
+    charger();
 
     /* ── Sync npoint ─────────────────────────────────────── */
     function setSync(state, msg) {
