@@ -103,7 +103,19 @@
             padding: 0.85rem 1rem;
             border-bottom: 0.5px solid #dde3ee;
             border-top: none;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.15s;
+            white-space: nowrap;
         }
+        .table-card thead th:hover { color: var(--tcl-red); }
+        .table-card thead th.no-sort,
+        .table-card thead th.no-sort:hover { cursor: default; color: #6b7a99; }
+        .table-card thead th.sorted-col { color: var(--tcl-red); }
+
+        .sort-icon { margin-left: 4px; font-size: 13px; opacity: 0.35; vertical-align: middle; }
+        .sort-icon.active { opacity: 1; }
+
         .table-card tbody td { padding: 0.75rem 1rem; border-color: #f0f2f7; vertical-align: middle; }
         .table-card tbody tr:hover td { background: #fdf5f6; }
 
@@ -270,9 +282,15 @@
         <table class="table table-borderless mb-0">
             <thead>
                 <tr>
-                    <th>ID complet</th><th>Suffixe</th><th>Format</th>
-                    <th>Contenu</th><th>Zones</th><th>Qté</th>
-                    <th>Emprunteur</th><th>Fonctionnel</th><th></th>
+                    <th onclick="sortBy('id')">ID complet <i class="ti ti-arrows-sort sort-icon" data-col="id"></i></th>
+                    <th onclick="sortBy('suffixe')">Suffixe <i class="ti ti-arrows-sort sort-icon" data-col="suffixe"></i></th>
+                    <th onclick="sortBy('format')">Format <i class="ti ti-arrows-sort sort-icon" data-col="format"></i></th>
+                    <th onclick="sortBy('contenu')">Contenu <i class="ti ti-arrows-sort sort-icon" data-col="contenu"></i></th>
+                    <th onclick="sortBy('zones')">Zones <i class="ti ti-arrows-sort sort-icon" data-col="zones"></i></th>
+                    <th onclick="sortBy('quantite')">Qté <i class="ti ti-arrows-sort sort-icon" data-col="quantite"></i></th>
+                    <th onclick="sortBy('emprunteur')">Emprunteur <i class="ti ti-arrows-sort sort-icon" data-col="emprunteur"></i></th>
+                    <th onclick="sortBy('fonctionnel')">Fonctionnel <i class="ti ti-arrows-sort sort-icon" data-col="fonctionnel"></i></th>
+                    <th class="no-sort"></th>
                 </tr>
             </thead>
             <tbody id="ticketBody"></tbody>
@@ -417,11 +435,14 @@
 </div>
 
 <script>
-    const API_URL  = 'https://api.npoint.io/31ba31f685940c724c54';
-    const PREFIX   = '06-14988599';
-    const VAR_LEN  = 12;
+    const API_URL     = 'https://api.npoint.io/31ba31f685940c724c54';
+    const PREFIX      = '06-14988599';
+    const VAR_LEN     = 12;
+    const PRIX_TICKET = 0.20; // économie réalisée par ticket encore fonctionnel
 
     let tickets = [];
+    let sortColumn = null;
+    let sortDirection = 'asc';
 
     /* ── Sync npoint ─────────────────────────────────────── */
     function setSync(state, msg) {
@@ -441,6 +462,7 @@
             localStorage.setItem('mesTickets', JSON.stringify(tickets));
             setSync('ok', 'Synchronisé');
         } catch(e) {
+            console.warn('npoint inaccessible, fallback localStorage', e);
             tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
             setSync('error', 'Hors ligne');
         }
@@ -459,12 +481,12 @@
             if (!r.ok) throw new Error(r.status);
             setSync('ok', 'Synchronisé');
         } catch(e) {
+            console.error('Erreur sync npoint', e);
             setSync('error', 'Erreur sync');
         }
     }
 
     /* ── Dropdowns custom ────────────────────────────────── */
-    // Ferme tous les dropdowns ouverts
     function closeAllDropdowns(except) {
         ['Format','Zones','Contenu'].forEach(name => {
             if (name === except) return;
@@ -544,10 +566,13 @@
         document.getElementById('mSuffixeDisplay').textContent = s || '—';
     }
 
-    /* ── Logique "Vide" ─────────────────────────────────── */
+    /* ── Logique "Vide" ─────────────────────────────────────
+       Quand Contenu = "Vide", Zones passe sur un tiret (—) et
+       est désactivé, et la quantité est forcée à 0.            */
     function setVideMode(isVide) {
         const isNonFonc = document.querySelector('input[name="mFonctionnel"]:checked')?.value === 'non';
-        if (isNonFonc) return; // Non fonctionnel a priorité
+        if (isNonFonc) return; // Non fonctionnel a priorité, ne touche pas aux champs
+
         if (isVide) {
             setDropdownDisabled('Zones', true, '—');
             document.getElementById('mQte').value = '0';
@@ -560,20 +585,36 @@
         }
     }
 
-    /* ── Logique "Non fonctionnel" ───────────────────────── */
+    /* ── Logique "Non fonctionnel" ───────────────────────────
+       En passant en "Non fonctionnel", Contenu/Zones/Qté sont
+       désactivés et passent sur un tiret. En revenant sur
+       "Fonctionnel", on restaure les valeurs précédentes —
+       rien n'est effacé qui n'était pas déjà un tiret.        */
     function setNonFoncMode(isNon) {
+        const contenuInp = document.getElementById('mContenu');
+        const zonesInp   = document.getElementById('mZones');
+        const qteInp     = document.getElementById('mQte');
+
         if (isNon) {
+            contenuInp.dataset.prev = contenuInp.value;
+            zonesInp.dataset.prev   = zonesInp.value;
+            qteInp.dataset.prev     = qteInp.value;
+
             setDropdownDisabled('Contenu', true, '—');
             setDropdownDisabled('Zones',   true, '—');
-            document.getElementById('mQte').value = '—';
-            document.getElementById('mQte').disabled = true;
+            qteInp.value = '—';
+            qteInp.disabled = true;
         } else {
             setDropdownDisabled('Contenu', false);
-            setDropdownValue('Contenu', '');
             setDropdownDisabled('Zones', false);
-            setDropdownValue('Zones', '');
-            document.getElementById('mQte').disabled = false;
-            document.getElementById('mQte').value = '';
+            qteInp.disabled = false;
+
+            if (contenuInp.value === '—') setDropdownValue('Contenu', contenuInp.dataset.prev || '');
+            if (zonesInp.value === '—')   setDropdownValue('Zones', zonesInp.dataset.prev || '');
+            if (qteInp.value === '—')     qteInp.value = qteInp.dataset.prev || '';
+
+            // Si le contenu restauré est "Vide", on ré-applique la désactivation des zones/quantité
+            if (contenuInp.value === 'Vide') setVideMode(true);
         }
     }
 
@@ -597,6 +638,10 @@
         setDropdownDisabled('Contenu', false); setDropdownValue('Contenu', '');
         setDropdownDisabled('Zones',   false); setDropdownValue('Zones',   '');
         setDropdownValue('Format', '');
+        // Nettoie les valeurs mémorisées par le mode "Non fonctionnel" du ticket précédent
+        delete document.getElementById('mContenu').dataset.prev;
+        delete document.getElementById('mZones').dataset.prev;
+        delete document.getElementById('mQte').dataset.prev;
         closeAllDropdowns(null);
     }
 
@@ -607,6 +652,7 @@
             ? '<i class="ti ti-ticket"></i> Nouveau ticket'
             : '<i class="ti ti-edit"></i> Modifier le ticket';
 
+        // À chaque ouverture (en particulier pour un nouveau ticket), on repart d'un formulaire vierge
         resetModal();
 
         if (index !== -1) {
@@ -681,220 +727,54 @@
         render();
     }
 
-    /* ── Render ──────────────────────────────────────────── */
-    function initials(name) {
-        if (!name || name === '—') return '—';
-        return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
-    }
-
-    function fonctionnelBadge(val) {
-        if (val === 'oui') return `<span class="badge-etat ok"><i class="ti ti-check"></i> Fonctionnel</span>`;
-        if (val === 'non') return `<span class="badge-etat ko"><i class="ti ti-x"></i> Non fonctionnel</span>`;
-        return `<span style="color:#bbb;font-size:12px">—</span>`;
-    }
-
-    function render() {
-        const tbody    = document.getElementById('ticketBody');
-        const empty    = document.getElementById('emptyState');
-        const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
-        const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
-        const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
-
-        document.getElementById('statsBar').innerHTML = `
-            <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
-            <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
-            <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
-            <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
-        `;
-
-        if (tickets.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-        empty.style.display = 'none';
-
-        tbody.innerHTML = tickets.map((t, i) => `
-            <tr>
-                <td style="font-family:monospace;font-weight:600;color:var(--tcl-red)">${t.id || '—'}</td>
-                <td style="font-family:monospace;color:#6b7a99">${t.suffixe || '—'}</td>
-                <td><span class="badge-format">${t.format || '—'}</span></td>
-                <td style="color:#2d3748">${t.contenu || '—'}</td>
-                <td>${t.zones && t.zones !== '—' ? `<span class="badge-zones">${t.zones}</span>` : '<span style="color:#bbb">—</span>'}</td>
-                <td style="font-weight:600;text-align:center">${t.quantite || '—'}</td>
-                <td>
-                    <div class="emprunteur-cell">
-                        ${t.emprunteur && t.emprunteur !== '—'
-                            ? `<div class="emp-avatar">${initials(t.emprunteur)}</div><span style="color:#4a5568">${t.emprunteur}</span>`
-                            : `<span style="color:#bbb">—</span>`}
-                    </div>
-                </td>
-                <td>${fonctionnelBadge(t.fonctionnel)}</td>
-                <td><button class="btn-edit" onclick="ouvrirModal(${i})"><i class="ti ti-edit"></i> Éditer</button></td>
-            </tr>
-        `).join('');
-    }
-
-    document.getElementById('myModal').addEventListener('click', function(e) {
-        if (e.target === this) fermerModal();
-    });
-
-    charger();
-
-    /* ── Sync npoint ─────────────────────────────────────── */
-    function setSync(state, msg) {
-        const el = document.getElementById('syncStatus');
-        const icons = { idle:'ti-cloud', saving:'ti-cloud-upload', ok:'ti-cloud-check', error:'ti-cloud-x' };
-        el.className = `sync-status ${state}`;
-        el.innerHTML = `<i class="ti ${icons[state]}"></i> <span>${msg}</span>`;
-    }
-
-    async function charger() {
-        setSync('saving', 'Chargement…');
-        try {
-            const r = await fetch(API_URL);
-            if (!r.ok) throw new Error(r.status);
-            const json = await r.json();
-            tickets = Array.isArray(json) ? json : (json.data || []);
-            localStorage.setItem('mesTickets', JSON.stringify(tickets));
-            setSync('ok', 'Synchronisé');
-        } catch(e) {
-            console.warn('npoint inaccessible, fallback localStorage', e);
-            tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
-            setSync('error', 'Hors ligne');
-        }
-        render();
-    }
-
-    async function sauvegarderAPI() {
-        setSync('saving', 'Sauvegarde…');
-        localStorage.setItem('mesTickets', JSON.stringify(tickets));
-        try {
-            const r = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(tickets)
-            });
-            if (!r.ok) throw new Error(r.status);
-            setSync('ok', 'Synchronisé');
-        } catch(e) {
-            console.error('Erreur sync npoint', e);
-            setSync('error', 'Erreur sync');
-        }
-    }
-
-    /* ── Logique champ ID ────────────────────────────────── */
-    function onIdInput(el) {
-        el.value = el.value.replace(/[^0-9]/g, '').slice(0, VAR_LEN);
-        const n = el.value.length;
-        document.getElementById('idCounter').textContent = `(${n}/${VAR_LEN} chiffres)`;
-        const err = n > 0 && n < VAR_LEN;
-        document.getElementById('idError').style.display = err ? 'block' : 'none';
-        document.getElementById('idWrapper').style.borderColor = err ? 'var(--tcl-red)' : '#ccd3e0';
-        const full = PREFIX + el.value;
-        document.getElementById('mId').value = full;
-        const s = full.length >= 23 ? full.slice(17, 23) : (full.length > 17 ? full.slice(17) : '');
-        document.getElementById('mSuffixe').value = s;
-        document.getElementById('mSuffixeDisplay').textContent = s || '—';
-    }
-
-    /* ── Logique "Vide" ─────────────────────────────────── */
-    function setVideMode(isVide) {
-        const zones = document.getElementById('mZones');
-        const qte   = document.getElementById('mQte');
-        if (isVide) {
-            zones.value = '—'; zones.disabled = true;
-            qte.value   = '0'; qte.disabled   = true;
+    /* ── Tri des colonnes ─────────────────────────────────── */
+    function sortBy(column) {
+        if (sortColumn === column) {
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
-            zones.disabled = false; qte.disabled = false;
-            if (zones.value === '—') zones.value = '';
-            if (qte.value   === '0') qte.value   = '';
+            sortColumn = column;
+            sortDirection = 'asc';
         }
-    }
-
-    document.getElementById('mContenu').addEventListener('change', function() {
-        setVideMode(this.value === 'Vide');
-    });
-
-    /* ── Modal ───────────────────────────────────────────── */
-    function resetModal() {
-        document.getElementById('mIdSuffix').value = '';
-        document.getElementById('mId').value = '';
-        document.getElementById('idCounter').textContent = `(0/${VAR_LEN} chiffres)`;
-        document.getElementById('mSuffixe').value = '';
-        document.getElementById('mSuffixeDisplay').textContent = '—';
-        document.getElementById('idError').style.display = 'none';
-        document.getElementById('idWrapper').style.borderColor = '#ccd3e0';
-        document.getElementById('mFormat').value = '';
-        document.getElementById('mContenu').value = '';
-        document.getElementById('mZones').value = '';
-        document.getElementById('mQte').value = '';
-        document.getElementById('mEmp').value = '';
-        document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
-        ['mContenu','mZones','mQte'].forEach(id => document.getElementById(id).disabled = false);
-    }
-
-    function ouvrirModal(index = -1) {
-        document.getElementById('editIndex').value = index;
-        document.getElementById('btnSupp').style.display = index === -1 ? 'none' : 'inline-flex';
-        document.getElementById('modalTitle').innerHTML = index === -1
-            ? '<i class="ti ti-ticket"></i> Nouveau ticket'
-            : '<i class="ti ti-edit"></i> Modifier le ticket';
-
-        resetModal();
-
-        if (index !== -1) {
-            const t = tickets[index];
-            const varPart = t.id.startsWith(PREFIX) ? t.id.slice(PREFIX.length) : t.id;
-            document.getElementById('mIdSuffix').value = varPart;
-            document.getElementById('mId').value = t.id;
-            document.getElementById('idCounter').textContent = `(${varPart.length}/${VAR_LEN} chiffres)`;
-            document.getElementById('mSuffixe').value = t.suffixe;
-            document.getElementById('mSuffixeDisplay').textContent = t.suffixe || '—';
-            document.getElementById('mFormat').value = t.format;
-            document.getElementById('mEmp').value = t.emprunteur === '—' ? '' : (t.emprunteur || '');
-            if (t.fonctionnel) { const r = document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`); if(r) r.checked = true; }
-            document.getElementById('mContenu').value = t.contenu;
-            document.getElementById('mZones').value   = t.zones;
-            document.getElementById('mQte').value     = t.quantite;
-            setVideMode(t.contenu === 'Vide');
-        }
-        document.getElementById('myModal').classList.add('open');
-    }
-
-    function fermerModal() { document.getElementById('myModal').classList.remove('open'); }
-
-    /* ── Sauvegarde / Suppression ────────────────────────── */
-    function sauvegarder() {
-        const varPart = document.getElementById('mIdSuffix').value;
-        if (varPart.length !== VAR_LEN) {
-            document.getElementById('idError').style.display = 'block';
-            document.getElementById('idWrapper').style.borderColor = 'var(--tcl-red)';
-            return;
-        }
-        const index      = parseInt(document.getElementById('editIndex').value);
-        const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
-        const empRaw      = document.getElementById('mEmp').value.trim();
-
-        const ticket = {
-            id:          document.getElementById('mId').value,
-            suffixe:     document.getElementById('mSuffixe').value,
-            format:      document.getElementById('mFormat').value,
-            contenu:     document.getElementById('mContenu').value,
-            zones:       document.getElementById('mZones').value,
-            quantite:    document.getElementById('mQte').value,
-            emprunteur:  empRaw === '' ? '—' : empRaw,
-            fonctionnel: fonctionnel
-        };
-
-        if (index === -1) tickets.push(ticket); else tickets[index] = ticket;
-        sauvegarderAPI();
-        fermerModal();
         render();
     }
 
-    function supprimer() {
-        const index = parseInt(document.getElementById('editIndex').value);
-        tickets.splice(index, 1);
-        sauvegarderAPI();
-        fermerModal();
-        render();
+    function getTicketsTries() {
+        const indexed = tickets.map((t, i) => ({ t, i }));
+        if (!sortColumn) return indexed;
+
+        indexed.sort((a, b) => {
+            let va = a.t[sortColumn];
+            let vb = b.t[sortColumn];
+
+            // Tri numérique pour la quantité (les tirets/valeurs vides passent en dernier)
+            if (sortColumn === 'quantite') {
+                const na = (va === '—' || va === '' || va == null || isNaN(va)) ? -Infinity : parseFloat(va);
+                const nb = (vb === '—' || vb === '' || vb == null || isNaN(vb)) ? -Infinity : parseFloat(vb);
+                return sortDirection === 'asc' ? na - nb : nb - na;
+            }
+
+            va = (va ?? '').toString();
+            vb = (vb ?? '').toString();
+            // "numeric: true" permet un tri correct des ID/suffixes (numériques sous forme de texte)
+            const cmp = va.localeCompare(vb, 'fr', { numeric: true, sensitivity: 'base' });
+            return sortDirection === 'asc' ? cmp : -cmp;
+        });
+
+        return indexed;
+    }
+
+    function majIconesTri() {
+        document.querySelectorAll('.table-card thead th').forEach(th => th.classList.remove('sorted-col'));
+        document.querySelectorAll('.sort-icon').forEach(icon => {
+            const col = icon.dataset.col;
+            icon.classList.remove('ti-arrows-sort','ti-sort-ascending','ti-sort-descending','active');
+            if (col === sortColumn) {
+                icon.classList.add(sortDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending', 'active');
+                icon.closest('th').classList.add('sorted-col');
+            } else {
+                icon.classList.add('ti-arrows-sort');
+            }
+        });
     }
 
     /* ── Render ──────────────────────────────────────────── */
@@ -915,18 +795,24 @@
         const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
         const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
         const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
+        const economies = (nbOk * PRIX_TICKET).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
 
         document.getElementById('statsBar').innerHTML = `
             <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
             <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
             <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
             <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
+            <div class="stat-card"><div class="label">Économies réalisées</div><div class="value" style="color:#2e7d32">${economies}</div></div>
         `;
+
+        majIconesTri();
 
         if (tickets.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
         empty.style.display = 'none';
 
-        tbody.innerHTML = tickets.map((t, i) => `
+        const lignes = getTicketsTries();
+
+        tbody.innerHTML = lignes.map(({t, i}) => `
             <tr>
                 <td style="font-family:monospace;font-weight:600;color:var(--tcl-red)">${t.id || '—'}</td>
                 <td style="font-family:monospace;color:#6b7a99">${t.suffixe || '—'}</td>
