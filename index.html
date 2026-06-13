@@ -10,59 +10,38 @@
             --tcl-red: #E2001A;
             --tcl-red-dark: #b50015;
             --tcl-red-light: #fce8eb;
-            --tcl-red-mid: #f5a0ab;
         }
 
         body {
             background: #f4f6fa;
-            font-family: Google Sans Flex, sans-serif;
+            font-family: system-ui, sans-serif;
             color: #1a1a2e;
         }
 
         .page-header {
-            /* On enlève le background ici */
-            color: white; /* Couleur du texte */
+            color: white;
             height: 72px;
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 2rem;
             padding-right: 2rem;
-            position: relative; /* Indispensable pour le positionnement du pseudo-élément */
-            z-index: 1; /* Pour que le contenu reste au-dessus du fond */
+            position: relative;
+            z-index: 1;
         }
 
         .page-header::before {
             content: "";
             position: absolute;
-            top: 0;
-            left: 100px; /* Commence 100px après la gauche */
-            right: 0;    /* S'étire jusqu'à la droite */
-            bottom: 0;
+            top: 0; left: 100px; right: 0; bottom: 0;
             background: var(--tcl-red);
-            z-index: -1; /* Place le fond derrière le texte */
+            z-index: -1;
         }
 
-        .header-svg-wrap {
-            height: 100%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: stretch;
-        }
+        .header-svg-wrap { height: 100%; flex-shrink: 0; display: flex; align-items: stretch; }
+        .header-svg-wrap svg { height: 100%; width: auto; display: block; }
 
-        .header-svg-wrap svg {
-            height: 100%;
-            width: auto;
-            display: block;
-        }
-
-        .page-header h1 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 0;
-            opacity: 0.95;
-            letter-spacing: 0.01em;
-        }
+        .page-header h1 { font-size: 1.1rem; font-weight: 600; margin: 0; opacity: 0.95; }
 
         .page-header .btn-add {
             margin-left: auto;
@@ -80,12 +59,26 @@
             transition: opacity 0.15s;
             white-space: nowrap;
         }
-
         .page-header .btn-add:hover { opacity: 0.85; }
 
-        .content-area { padding: 0 2rem 2rem; }
+        .sync-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .sync-status.idle    { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+        .sync-status.saving  { background: rgba(255,255,255,0.25); color: white; }
+        .sync-status.ok      { background: #e8f5e9; color: #2e7d32; }
+        .sync-status.error   { background: #fce8eb; color: #b50015; }
 
-        .stats-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .content-area { padding: 0 2rem 2rem; }
+        .stats-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
         .stat-card {
             background: white;
@@ -94,28 +87,10 @@
             border: 0.5px solid #dde3ee;
             min-width: 130px;
         }
+        .stat-card .label { font-size: 12px; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+        .stat-card .value { font-size: 22px; font-weight: 600; color: var(--tcl-red); }
 
-        .stat-card .label {
-            font-size: 12px;
-            color: #6b7a99;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 4px;
-        }
-
-        .stat-card .value {
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--tcl-red);
-        }
-
-        .table-card {
-            background: white;
-            border-radius: 12px;
-            border: 0.5px solid #dde3ee;
-            overflow: hidden;
-        }
-
+        .table-card { background: white; border-radius: 12px; border: 0.5px solid #dde3ee; overflow: hidden; }
         .table-card table { margin: 0; font-size: 0.875rem; }
 
         .table-card thead th {
@@ -129,303 +104,100 @@
             border-bottom: 0.5px solid #dde3ee;
             border-top: none;
         }
-
-        .table-card tbody td {
-            padding: 0.75rem 1rem;
-            border-color: #f0f2f7;
-            vertical-align: middle;
-        }
-
+        .table-card tbody td { padding: 0.75rem 1rem; border-color: #f0f2f7; vertical-align: middle; }
         .table-card tbody tr:hover td { background: #fdf5f6; }
 
-        .badge-format {
-            display: inline-block;
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            background: var(--tcl-red-light);
-            color: var(--tcl-red-dark);
-        }
+        .badge-format { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; background: var(--tcl-red-light); color: var(--tcl-red-dark); }
+        .badge-zones  { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; background: #fff3e0; color: #b45309; }
 
-        .badge-zones {
-            display: inline-block;
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 500;
-            background: #fff3e0;
-            color: #b45309;
+        .badge-etat {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
         }
-
-        .badge-fonctionnel {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .badge-fonctionnel.ok {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .badge-fonctionnel.ko {
-            background: #fce8eb;
-            color: #b50015;
-        }
+        .badge-etat.utilisable { background: #e8f5e9; color: #2e7d32; }
+        .badge-etat.mort       { background: #f0f0f0; color: #777; }
 
         .btn-edit {
-            background: transparent;
-            border: 0.5px solid #ccd3e0;
-            color: #4a5568;
-            border-radius: 7px;
-            padding: 5px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.15s;
+            background: transparent; border: 0.5px solid #ccd3e0; color: #4a5568;
+            border-radius: 7px; padding: 5px 12px; font-size: 12px; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s;
         }
+        .btn-edit:hover { background: var(--tcl-red-light); border-color: var(--tcl-red); color: var(--tcl-red-dark); }
 
-        .btn-edit:hover {
-            background: var(--tcl-red-light);
-            border-color: var(--tcl-red);
-            color: var(--tcl-red-dark);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #9aa5be;
-        }
-
+        .empty-state { text-align: center; padding: 3rem 1rem; color: #9aa5be; }
         .empty-state i { font-size: 3rem; display: block; margin-bottom: 1rem; }
 
         #myModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(15, 23, 60, 0.55);
-            z-index: 1050;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15,23,60,0.55); z-index: 1050; align-items: center; justify-content: center;
         }
-
         #myModal.open { display: flex; }
 
         .modal-box {
-            background: white;
-            border-radius: 14px;
-            padding: 1.75rem;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-            max-height: 92vh;
-            overflow-y: auto;
+            background: white; border-radius: 14px; padding: 1.75rem;
+            width: 100%; max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18); max-height: 92vh; overflow-y: auto;
         }
 
-        .modal-header-custom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.25rem;
-        }
+        .modal-header-custom { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+        .modal-header-custom h5 { font-size: 1.05rem; font-weight: 600; margin: 0; color: var(--tcl-red); display: flex; align-items: center; gap: 7px; }
 
-        .modal-header-custom h5 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin: 0;
-            color: var(--tcl-red);
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: #9aa5be;
-            cursor: pointer;
-            font-size: 1.3rem;
-            padding: 2px;
-            line-height: 1;
-        }
-
+        .modal-close { background: none; border: none; color: #9aa5be; cursor: pointer; font-size: 1.3rem; padding: 2px; line-height: 1; }
         .modal-close:hover { color: #4a5568; }
 
-        .form-label-sm {
-            font-size: 12px;
-            font-weight: 600;
-            color: #6b7a99;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 4px;
-            display: block;
-        }
-
+        .form-label-sm { font-size: 12px; font-weight: 600; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; display: block; }
         .form-group { margin-bottom: 1rem; }
 
-        .modal-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 0.5px solid #eef0f6;
-        }
+        .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 0.5px solid #eef0f6; }
 
-        .btn-save {
-            background: var(--tcl-red);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.6rem 1.25rem;
-            font-weight: 700;
-            font-size: 0.875rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex: 1;
-            justify-content: center;
-            transition: background 0.15s;
-        }
-
+        .btn-save { background: var(--tcl-red); color: white; border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 700; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; transition: background 0.15s; }
         .btn-save:hover { background: var(--tcl-red-dark); }
 
-        .btn-delete {
-            background: #fff1f0;
-            color: #c0392b;
-            border: 0.5px solid #f5c6c2;
-            border-radius: 8px;
-            padding: 0.6rem 1.25rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.15s;
-        }
-
+        .btn-delete { background: #fff1f0; color: #c0392b; border: 0.5px solid #f5c6c2; border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
         .btn-delete:hover { background: #ffe4e2; }
 
-        .btn-cancel {
-            background: #f4f6fa;
-            color: #4a5568;
-            border: none;
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-            font-weight: 500;
-            font-size: 0.875rem;
-            cursor: pointer;
-        }
-
+        .btn-cancel { background: #f4f6fa; color: #4a5568; border: none; border-radius: 8px; padding: 0.6rem 1rem; font-weight: 500; font-size: 0.875rem; cursor: pointer; }
         .btn-cancel:hover { background: #e8eaf0; }
 
         input.form-control, select.form-select {
-            border-radius: 8px;
-            border: 0.5px solid #ccd3e0;
-            font-size: 0.875rem;
-            padding: 0.55rem 0.85rem;
-            color: #1a1a2e;
+            border-radius: 8px; border: 0.5px solid #ccd3e0;
+            font-size: 0.875rem; padding: 0.55rem 0.85rem; color: #1a1a2e;
         }
-
-        input.form-control:focus, select.form-select:focus {
-            border-color: var(--tcl-red);
-            box-shadow: 0 0 0 3px rgba(226,0,26,0.1);
-        }
-
-        select.form-select option[value=""] { color: #9aa5be; }
+        input.form-control:focus, select.form-select:focus { border-color: var(--tcl-red); box-shadow: 0 0 0 3px rgba(226,0,26,0.1); }
+        input.form-control:disabled, select.form-select:disabled { background: #f4f4f4; color: #aaa; cursor: not-allowed; }
 
         .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
-        .suffix-display {
-            font-family: monospace;
-            background: #f8f9fc;
-            border: 0.5px solid #dde3ee;
-            border-radius: 8px;
-            padding: 0.55rem 0.85rem;
-            font-size: 0.95rem;
-            color: var(--tcl-red);
-            font-weight: 700;
-            letter-spacing: 0.1em;
+        .suffix-display { font-family: monospace; background: #f8f9fc; border: 0.5px solid #dde3ee; border-radius: 8px; padding: 0.55rem 0.85rem; font-size: 0.95rem; color: var(--tcl-red); font-weight: 700; letter-spacing: 0.1em; }
+
+        .emprunteur-cell { display: flex; align-items: center; gap: 7px; }
+        .emp-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--tcl-red-light); color: var(--tcl-red-dark); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+        .toggle-group { display: flex; border: 0.5px solid #ccd3e0; border-radius: 8px; overflow: hidden; }
+        .toggle-group input[type=radio] { display: none; }
+        .toggle-group label {
+            flex: 1; text-align: center; padding: 0.5rem; font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+            transition: all 0.15s; color: #9aa5be; background: white; border: none; margin: 0;
         }
+        .toggle-group label:not(:last-child) { border-right: 0.5px solid #ccd3e0; }
 
-        .emprunteur-cell {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .emp-avatar {
-            width: 26px; height: 26px;
-            border-radius: 50%;
-            background: var(--tcl-red-light);
-            color: var(--tcl-red-dark);
-            font-size: 11px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        /* Toggle fonctionnel */
-        .toggle-fonctionnel {
-            display: flex;
-            gap: 0;
-            border: 0.5px solid #ccd3e0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .toggle-fonctionnel input[type=radio] { display: none; }
-
-        .toggle-fonctionnel label {
-            flex: 1;
-            text-align: center;
-            padding: 0.5rem 0.5rem;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: all 0.15s;
-            color: #9aa5be;
-            background: white;
-            border: none;
-            margin: 0;
-        }
-
-        .toggle-fonctionnel input[value="oui"]:checked + label {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .toggle-fonctionnel input[value="non"]:checked + label {
-            background: #fce8eb;
-            color: #b50015;
-        }
-
-        .toggle-fonctionnel label:first-of-type { border-right: 0.5px solid #ccd3e0; }
+        /* État */
+        #eUtilisable:checked + label { background: #e8f5e9; color: #2e7d32; }
+        #eMort:checked       + label { background: #f0f0f0; color: #555; }
+        /* Fonctionnel */
+        #fOui:checked + label { background: #e8f5e9; color: #2e7d32; }
+        #fNon:checked + label { background: #fce8eb; color: #b50015; }
     </style>
 </head>
 <body>
 
 <div class="page-header">
     <div class="header-svg-wrap">
-        <svg width="100%" height="100%" viewBox="0 0 804 398" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+        <svg viewBox="0 0 804 398" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
             <g transform="matrix(1,0,0,1,-1185.232032,-1281.990164)">
                 <g transform="matrix(0,1,-2.243502,0,3848.40344,315.149584)">
-                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z"/>
+                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z" style="fill:rgba(255,255,255,0.15);"/>
                 </g>
                 <g transform="matrix(0.173485,0,0,0.173433,712.57317,1394.882698)">
                     <path d="M5373,234L5384,390L4904,391C4847,391 4801,436 4801,493C4802,552 4848,598 4905,598L5385,597L5374,754C5287,895 5132,988 4953,988C4682,988 4460,767 4460,493C4460,444 4468,395 4482,350L4327,350L4328,954L3936,954L3935,350L3698,350L3698,35L4564,35L4564,190C4654,74 4795,0 4953,0C5132,0 5287,93 5373,234ZM5374,754L5615,494L5373,234L5373,35L5782,35L5783,623L6137,623L6138,953L5374,954L5374,754Z" style="fill:white;"/>
@@ -434,33 +206,27 @@
         </svg>
     </div>
     <h1>Gestion des tickets</h1>
+    <div id="syncStatus" class="sync-status idle"><i class="ti ti-cloud"></i> <span>Synchronisé</span></div>
     <button class="btn-add" onclick="ouvrirModal()">
-        <i class="ti ti-plus" aria-hidden="true"></i> Ajouter un Ticket
+        <i class="ti ti-plus"></i> Ajouter un ticket
     </button>
 </div>
 
 <div class="content-area">
     <div class="stats-bar" id="statsBar"></div>
-
     <div class="table-card">
         <table class="table table-borderless mb-0">
             <thead>
                 <tr>
-                    <th>ID complet</th>
-                    <th>Suffixe</th>
-                    <th>Format</th>
-                    <th>Contenu</th>
-                    <th>Zones</th>
-                    <th>Qté</th>
-                    <th>Emprunteur</th>
-                    <th>État</th>
-                    <th></th>
+                    <th>ID complet</th><th>Suffixe</th><th>Format</th>
+                    <th>Contenu</th><th>Zones</th><th>Qté</th>
+                    <th>Emprunteur</th><th>État</th><th>Fonctionnel</th><th></th>
                 </tr>
             </thead>
             <tbody id="ticketBody"></tbody>
         </table>
         <div id="emptyState" class="empty-state" style="display:none">
-            <i class="ti ti-ticket-off" aria-hidden="true"></i>
+            <i class="ti ti-ticket-off"></i>
             Aucun ticket enregistré.<br>
             <small>Cliquez sur « Ajouter un ticket » pour commencer.</small>
         </div>
@@ -470,8 +236,8 @@
 <div id="myModal">
     <div class="modal-box">
         <div class="modal-header-custom">
-            <h5 id="modalTitle"><i class="ti ti-ticket" aria-hidden="true"></i>Nouveau ticket</h5>
-            <button class="modal-close" onclick="fermerModal()" aria-label="Fermer"><i class="ti ti-x"></i></button>
+            <h5 id="modalTitle"><i class="ti ti-ticket"></i> Nouveau ticket</h5>
+            <button class="modal-close" onclick="fermerModal()"><i class="ti ti-x"></i></button>
         </div>
 
         <input type="hidden" id="editIndex">
@@ -487,6 +253,7 @@
             <input type="hidden" id="mId">
             <div id="idError" style="font-size:11px;color:var(--tcl-red);margin-top:3px;display:none">12 chiffres requis (chiffres uniquement)</div>
         </div>
+
         <div class="form-group">
             <label class="form-label-sm">Suffixe (caractères 18–23)</label>
             <div class="suffix-display" id="mSuffixeDisplay">—</div>
@@ -535,166 +302,136 @@
             </div>
             <div class="form-group">
                 <label class="form-label-sm">Emprunteur</label>
-                <input type="text" id="mEmp" placeholder="Nom ou initiales" class="form-control">
+                <input type="text" id="mEmp" placeholder="— si non emprunté" class="form-control">
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label-sm">Fonctionnel</label>
-            <div class="toggle-fonctionnel">
-                <input type="radio" name="mFonctionnel" id="fOui" value="oui">
-                <label for="fOui"><i class="ti ti-check" aria-hidden="true"></i> Fonctionnel</label>
-                <input type="radio" name="mFonctionnel" id="fNon" value="non">
-                <label for="fNon"><i class="ti ti-x" aria-hidden="true"></i> Non fonctionnel</label>
+        <div class="row-2col">
+            <div class="form-group">
+                <label class="form-label-sm">État</label>
+                <div class="toggle-group">
+                    <input type="radio" name="mEtat" id="eUtilisable" value="utilisable">
+                    <label for="eUtilisable"><i class="ti ti-check"></i> Utilisable</label>
+                    <input type="radio" name="mEtat" id="eMort" value="mort">
+                    <label for="eMort"><i class="ti ti-skull"></i> Mort</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label-sm">Fonctionnel</label>
+                <div class="toggle-group">
+                    <input type="radio" name="mFonctionnel" id="fOui" value="oui">
+                    <label for="fOui"><i class="ti ti-check"></i> Oui</label>
+                    <input type="radio" name="mFonctionnel" id="fNon" value="non">
+                    <label for="fNon"><i class="ti ti-x"></i> Non</label>
+                </div>
             </div>
         </div>
 
         <div class="modal-actions">
-            <button class="btn-save" onclick="sauvegarder()">
-                <i class="ti ti-device-floppy" aria-hidden="true"></i> Enregistrer
-            </button>
-            <button id="btnSupp" class="btn-delete" onclick="supprimer()" style="display:none">
-                <i class="ti ti-trash" aria-hidden="true"></i> Supprimer
-            </button>
+            <button class="btn-save" onclick="sauvegarder()"><i class="ti ti-device-floppy"></i> Enregistrer</button>
+            <button id="btnSupp" class="btn-delete" onclick="supprimer()" style="display:none"><i class="ti ti-trash"></i> Supprimer</button>
             <button class="btn-cancel" onclick="fermerModal()">Annuler</button>
         </div>
     </div>
 </div>
 
 <script>
-    const API_URL = 'https://api.npoint.io/31ba31f685940c724c54';
-    // Remplace ton ancien "let tickets = [];" par ceci :
-    let tickets = new Proxy([], {
-        set(target, property, value) {
-            target[property] = value;
-            // Dès qu'une valeur change dans le tableau, on lance la sync
-            if (property !== 'length') { 
-                syncAPI(); 
-            }
-            return true;
-        }
-    });
-    
-    // Ajoute cette fonction pour pouvoir vider/remplacer le tableau proprement
-    function updateTickets(newArray) {
-        tickets.splice(0, tickets.length, ...newArray);
+    const API_URL  = 'https://api.npoint.io/31ba31f685940c724c54';
+    const PREFIX   = '06-14988599';
+    const VAR_LEN  = 12;
+
+    let tickets = [];
+
+    /* ── Sync npoint ─────────────────────────────────────── */
+    function setSync(state, msg) {
+        const el = document.getElementById('syncStatus');
+        const icons = { idle:'ti-cloud', saving:'ti-cloud-upload', ok:'ti-cloud-check', error:'ti-cloud-x' };
+        el.className = `sync-status ${state}`;
+        el.innerHTML = `<i class="ti ${icons[state]}"></i> <span>${msg}</span>`;
     }
 
-    // --- INITIALISATION ---
-    async function init() {
-        console.log("Tentative de connexion à l'API...");
+    async function charger() {
+        setSync('saving', 'Chargement…');
         try {
-            const response = await fetch(API_URL);
-            if (!response.ok) throw new Error(`HTTP erreur: ${response.status}`);
-            
-            const json = await response.json();
-            // On vérifie si ton JSON est un tableau pur ou un objet {data: []}
+            const r = await fetch(API_URL);
+            if (!r.ok) throw new Error(r.status);
+            const json = await r.json();
             tickets = Array.isArray(json) ? json : (json.data || []);
-            
-            console.log("%c Lié avec JSON : Succès", "color: green; font-weight: bold;");
-            console.log("Données récupérées :", tickets);
-        } catch (e) {
-            console.error("%c Erreur : Impossible de lier l'API", "color: red; font-weight: bold;");
-            console.error("Détail de l'erreur :", e);
+            localStorage.setItem('mesTickets', JSON.stringify(tickets));
+            setSync('ok', 'Synchronisé');
+        } catch(e) {
+            console.warn('npoint inaccessible, fallback localStorage', e);
             tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
+            setSync('error', 'Hors ligne');
         }
         render();
     }
 
-    // --- SAUVEGARDE ---
-    async function syncAPI() {
-        console.log("Tentative d'écriture vers l'API...");
+    async function sauvegarderAPI() {
+        setSync('saving', 'Sauvegarde…');
+        localStorage.setItem('mesTickets', JSON.stringify(tickets));
         try {
-            const response = await fetch(API_URL, {
+            const r = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(tickets) // On envoie le tableau brut
+                body: JSON.stringify(tickets)
             });
-
-            if (response.ok) {
-                console.log("%c Succès : Données écrites dans le JSON", "color: green; font-weight: bold;");
-                localStorage.setItem('mesTickets', JSON.stringify(tickets));
-            } else {
-                throw new Error(`Serveur a répondu : ${response.status}`);
-            }
-        } catch (e) {
-            console.error("%c Erreur : Impossible d'écrire dans le JSON", "color: red; font-weight: bold;");
-            console.error("Détail :", e);
-            alert("Erreur de sauvegarde : consulte la console (F12)");
+            if (!r.ok) throw new Error(r.status);
+            setSync('ok', 'Synchronisé');
+        } catch(e) {
+            console.error('Erreur sync npoint', e);
+            setSync('error', 'Erreur sync');
         }
     }
 
-    // Appelle init au démarrage
-    init();
-
-    // --- RESTE DE TES FONCTIONS (sauvegarder, supprimer, etc.) ---
-    // Assure-toi que ces fonctions appellent bien syncAPI() à la fin
-    function sauvegarder() {
-        let varPart = document.getElementById('mIdSuffix').value;
-        if (varPart.length !== VAR_LEN) {
-            document.getElementById('idError').style.display = 'block';
-            document.getElementById('idWrapper').style.borderColor = 'var(--tcl-red)';
-            return;
-        }
-        let index = parseInt(document.getElementById('editIndex').value);
-        let fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
-        let ticket = {
-            id: document.getElementById('mId').value,
-            suffixe: document.getElementById('mSuffixe').value,
-            format: document.getElementById('mFormat').value,
-            contenu: document.getElementById('mContenu').value,
-            zones: document.getElementById('mZones').value,
-            quantite: document.getElementById('mQte').value,
-            emprunteur: document.getElementById('mEmp').value,
-            fonctionnel: fonctionnel
-        };
-        
-        if (index === -1) tickets.push(ticket); else tickets[index] = ticket;
-        
-        // Ajout de l'appel à syncAPI ici
-        syncAPI(); 
-        fermerModal(); 
-        render();
-    }
-
-    function supprimer() {
-        let index = parseInt(document.getElementById('editIndex').value);
-        tickets.splice(index, 1);
-        
-        // Ajout de l'appel à syncAPI ici
-        syncAPI(); 
-        fermerModal(); 
-        render();
-    }
-
+    /* ── Logique champ ID ────────────────────────────────── */
     function onIdInput(el) {
         el.value = el.value.replace(/[^0-9]/g, '').slice(0, VAR_LEN);
-        let n = el.value.length;
+        const n = el.value.length;
         document.getElementById('idCounter').textContent = `(${n}/${VAR_LEN} chiffres)`;
-        document.getElementById('idError').style.display = (n > 0 && n < VAR_LEN) ? 'block' : 'none';
-        let full = PREFIX + el.value;
+        const err = n > 0 && n < VAR_LEN;
+        document.getElementById('idError').style.display = err ? 'block' : 'none';
+        document.getElementById('idWrapper').style.borderColor = err ? 'var(--tcl-red)' : '#ccd3e0';
+        const full = PREFIX + el.value;
         document.getElementById('mId').value = full;
-        // Suffixe = positions 18–23 de l'ID complet (index 17–22, base 0)
-        let s = full.length >= 23 ? full.slice(17, 23) : (full.length > 17 ? full.slice(17) : '');
+        const s = full.length >= 23 ? full.slice(17, 23) : (full.length > 17 ? full.slice(17) : '');
         document.getElementById('mSuffixe').value = s;
         document.getElementById('mSuffixeDisplay').textContent = s || '—';
-        let wrapper = document.getElementById('idWrapper');
-        wrapper.style.borderColor = (n > 0 && n < VAR_LEN) ? 'var(--tcl-red)' : '#ccd3e0';
+    }
+
+    /* ── Logique "Mort" et "Vide" ────────────────────────── */
+    function setMortMode(isMort) {
+        const contenu = document.getElementById('mContenu');
+        const zones   = document.getElementById('mZones');
+        const qte     = document.getElementById('mQte');
+        if (isMort) {
+            contenu.value    = '—'; contenu.disabled = true;
+            zones.value      = '—'; zones.disabled   = true;
+            qte.value        = '0'; qte.disabled     = true;
+        } else {
+            contenu.disabled = false;
+            // Ne débloquer Zones/Qté que si Contenu n'est pas Vide
+            const isVide = contenu.value === 'Vide';
+            zones.disabled = isVide;
+            qte.disabled   = isVide;
+            if (contenu.value === '—') contenu.value = '';
+            if (zones.value   === '—') zones.value   = '';
+        }
     }
 
     function setVideMode(isVide) {
-        let selZones = document.getElementById('mZones');
-        let inputQte = document.getElementById('mQte');
+        const zones = document.getElementById('mZones');
+        const qte   = document.getElementById('mQte');
+        // Pas de logique Vide si Mort est actif
+        const isMort = document.querySelector('input[name="mEtat"]:checked')?.value === 'mort';
+        if (isMort) return;
         if (isVide) {
-            selZones.value = 'Vide';
-            selZones.disabled = true;
-            inputQte.value = '0';
-            inputQte.disabled = true;
+            zones.value = '—'; zones.disabled = true;
+            qte.value   = '0'; qte.disabled   = true;
         } else {
-            selZones.disabled = false;
-            inputQte.disabled = false;
-            if (selZones.value === 'Vide') selZones.value = '';
-            if (inputQte.value === '0') inputQte.value = '';
+            zones.disabled = false; qte.disabled = false;
+            if (zones.value === '—') zones.value = '';
+            if (qte.value   === '0') qte.value   = '';
         }
     }
 
@@ -702,135 +439,159 @@
         setVideMode(this.value === 'Vide');
     });
 
+    document.querySelectorAll('input[name="mEtat"]').forEach(r => r.addEventListener('change', function() {
+        setMortMode(this.value === 'mort');
+    }));
+
+    /* ── Modal ───────────────────────────────────────────── */
+    function resetModal() {
+        document.getElementById('mIdSuffix').value = '';
+        document.getElementById('mId').value = '';
+        document.getElementById('idCounter').textContent = `(0/${VAR_LEN} chiffres)`;
+        document.getElementById('mSuffixe').value = '';
+        document.getElementById('mSuffixeDisplay').textContent = '—';
+        document.getElementById('idError').style.display = 'none';
+        document.getElementById('idWrapper').style.borderColor = '#ccd3e0';
+        document.getElementById('mFormat').value = '';
+        document.getElementById('mContenu').value = '';
+        document.getElementById('mZones').value = '';
+        document.getElementById('mQte').value = '';
+        document.getElementById('mEmp').value = '';
+        document.querySelectorAll('input[name="mEtat"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
+        // Débloquer tout
+        ['mContenu','mZones','mQte'].forEach(id => document.getElementById(id).disabled = false);
+    }
+
     function ouvrirModal(index = -1) {
         document.getElementById('editIndex').value = index;
         document.getElementById('btnSupp').style.display = index === -1 ? 'none' : 'inline-flex';
         document.getElementById('modalTitle').innerHTML = index === -1
-            ? '<i class="ti ti-ticket" aria-hidden="true"></i>Nouveau ticket'
-            : '<i class="ti ti-edit" aria-hidden="true"></i>Modifier le ticket';
+            ? '<i class="ti ti-ticket"></i> Nouveau ticket'
+            : '<i class="ti ti-edit"></i> Modifier le ticket';
 
-        document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
-        document.getElementById('idError').style.display = 'none';
-        document.getElementById('idWrapper').style.borderColor = '#ccd3e0';
+        resetModal();
 
         if (index !== -1) {
-            let t = tickets[index];
-            let varPart = t.id.startsWith(PREFIX) ? t.id.slice(PREFIX.length) : t.id;
+            const t = tickets[index];
+            const varPart = t.id.startsWith(PREFIX) ? t.id.slice(PREFIX.length) : t.id;
             document.getElementById('mIdSuffix').value = varPart;
             document.getElementById('mId').value = t.id;
             document.getElementById('idCounter').textContent = `(${varPart.length}/${VAR_LEN} chiffres)`;
             document.getElementById('mSuffixe').value = t.suffixe;
             document.getElementById('mSuffixeDisplay').textContent = t.suffixe || '—';
             document.getElementById('mFormat').value = t.format;
-            document.getElementById('mContenu').value = t.contenu;
-            document.getElementById('mZones').value = t.zones;
-            document.getElementById('mQte').value = t.quantite;
-            document.getElementById('mEmp').value = t.emprunteur;
-            if (t.fonctionnel) {
-                document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`).checked = true;
+            document.getElementById('mEmp').value = t.emprunteur === '—' ? '' : (t.emprunteur || '');
+            if (t.etat) { const r = document.querySelector(`input[name="mEtat"][value="${t.etat}"]`); if(r) r.checked = true; }
+            if (t.fonctionnel) { const r = document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`); if(r) r.checked = true; }
+
+            if (t.etat === 'mort') {
+                setMortMode(true);
+            } else {
+                document.getElementById('mContenu').value = t.contenu;
+                document.getElementById('mZones').value   = t.zones;
+                document.getElementById('mQte').value     = t.quantite;
+                setVideMode(t.contenu === 'Vide');
             }
-            setVideMode(t.contenu === 'Vide');
-        } else {
-            document.getElementById('mIdSuffix').value = '';
-            document.getElementById('mId').value = '';
-            document.getElementById('idCounter').textContent = `(0/${VAR_LEN} chiffres)`;
-            document.getElementById('mSuffixe').value = '';
-            document.getElementById('mSuffixeDisplay').textContent = '—';
-            document.getElementById('mQte').value = '';
-            document.getElementById('mEmp').value = '';
-            document.getElementById('mFormat').value = '';
-            document.getElementById('mContenu').value = '';
-            document.getElementById('mZones').value = '';
-            setVideMode(false);
         }
         document.getElementById('myModal').classList.add('open');
     }
 
     function fermerModal() { document.getElementById('myModal').classList.remove('open'); }
 
+    /* ── Sauvegarde / Suppression ────────────────────────── */
     function sauvegarder() {
-        let varPart = document.getElementById('mIdSuffix').value;
+        const varPart = document.getElementById('mIdSuffix').value;
         if (varPart.length !== VAR_LEN) {
             document.getElementById('idError').style.display = 'block';
             document.getElementById('idWrapper').style.borderColor = 'var(--tcl-red)';
             return;
         }
-        let index = parseInt(document.getElementById('editIndex').value);
-        let fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
-        let ticket = {
-            id: document.getElementById('mId').value,
-            suffixe: document.getElementById('mSuffixe').value,
-            format: document.getElementById('mFormat').value,
-            contenu: document.getElementById('mContenu').value,
-            zones: document.getElementById('mZones').value,
-            quantite: document.getElementById('mQte').value,
-            emprunteur: document.getElementById('mEmp').value,
+        const index      = parseInt(document.getElementById('editIndex').value);
+        const etat       = document.querySelector('input[name="mEtat"]:checked')?.value || '';
+        const fonctionnel= document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
+        const empRaw     = document.getElementById('mEmp').value.trim();
+        const isMort     = etat === 'mort';
+
+        const ticket = {
+            id:          document.getElementById('mId').value,
+            suffixe:     document.getElementById('mSuffixe').value,
+            format:      document.getElementById('mFormat').value,
+            contenu:     isMort ? '—' : document.getElementById('mContenu').value,
+            zones:       isMort ? '—' : document.getElementById('mZones').value,
+            quantite:    isMort ? '0' : document.getElementById('mQte').value,
+            emprunteur:  empRaw === '' ? '—' : empRaw,
+            etat:        etat,
             fonctionnel: fonctionnel
         };
+
         if (index === -1) tickets.push(ticket); else tickets[index] = ticket;
-        localStorage.setItem('mesTickets', JSON.stringify(tickets));
-        fermerModal(); render();
+        sauvegarderAPI();
+        fermerModal();
+        render();
     }
 
     function supprimer() {
-        let index = parseInt(document.getElementById('editIndex').value);
+        const index = parseInt(document.getElementById('editIndex').value);
         tickets.splice(index, 1);
-        localStorage.setItem('mesTickets', JSON.stringify(tickets));
-        fermerModal(); render();
+        sauvegarderAPI();
+        fermerModal();
+        render();
     }
 
+    /* ── Render ──────────────────────────────────────────── */
     function initials(name) {
-        if (!name) return '?';
+        if (!name || name === '—') return '—';
         return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
     }
 
+    function etatBadge(val) {
+        if (val === 'utilisable') return `<span class="badge-etat utilisable"><i class="ti ti-check"></i> Utilisable</span>`;
+        if (val === 'mort')       return `<span class="badge-etat mort"><i class="ti ti-skull"></i> Mort</span>`;
+        return `<span style="color:#bbb;font-size:12px">—</span>`;
+    }
+
     function fonctionnelBadge(val) {
-        if (val === 'oui') return `<span class="badge-fonctionnel ok"><i class="ti ti-check"></i> Oui</span>`;
-        if (val === 'non') return `<span class="badge-fonctionnel ko"><i class="ti ti-x"></i> Non</span>`;
+        if (val === 'oui') return `<span class="badge-etat utilisable"><i class="ti ti-check"></i> Oui</span>`;
+        if (val === 'non') return `<span class="badge-etat" style="background:#fce8eb;color:#b50015"><i class="ti ti-x"></i> Non</span>`;
         return `<span style="color:#bbb;font-size:12px">—</span>`;
     }
 
     function render() {
-        const tbody = document.getElementById('ticketBody');
-        const empty = document.getElementById('emptyState');
+        const tbody    = document.getElementById('ticketBody');
+        const empty    = document.getElementById('emptyState');
         const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
-        const nbOk = tickets.filter(t => t.fonctionnel === 'oui').length;
-        const nbKo = tickets.filter(t => t.fonctionnel === 'non').length;
+        const nbUtil   = tickets.filter(t => t.etat === 'utilisable').length;
+        const nbMort   = tickets.filter(t => t.etat === 'mort').length;
 
         document.getElementById('statsBar').innerHTML = `
             <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
             <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
-            <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
-            <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
+            <div class="stat-card"><div class="label">Utilisables</div><div class="value" style="color:#2e7d32">${nbUtil}</div></div>
+            <div class="stat-card"><div class="label">Morts</div><div class="value" style="color:#888">${nbMort}</div></div>
         `;
 
-        if (tickets.length === 0) {
-            tbody.innerHTML = '';
-            empty.style.display = 'block';
-            return;
-        }
-
+        if (tickets.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
         empty.style.display = 'none';
+
         tbody.innerHTML = tickets.map((t, i) => `
             <tr>
                 <td style="font-family:monospace;font-weight:600;color:var(--tcl-red)">${t.id || '—'}</td>
                 <td style="font-family:monospace;color:#6b7a99">${t.suffixe || '—'}</td>
                 <td><span class="badge-format">${t.format || '—'}</span></td>
                 <td style="color:#2d3748">${t.contenu || '—'}</td>
-                <td><span class="badge-zones">${t.zones || '—'}</span></td>
+                <td>${t.zones && t.zones !== '—' ? `<span class="badge-zones">${t.zones}</span>` : '<span style="color:#bbb">—</span>'}</td>
                 <td style="font-weight:600;text-align:center">${t.quantite || '—'}</td>
                 <td>
                     <div class="emprunteur-cell">
-                        <div class="emp-avatar">${initials(t.emprunteur)}</div>
-                        <span style="color:#4a5568">${t.emprunteur || '—'}</span>
+                        ${t.emprunteur && t.emprunteur !== '—'
+                            ? `<div class="emp-avatar">${initials(t.emprunteur)}</div><span style="color:#4a5568">${t.emprunteur}</span>`
+                            : `<span style="color:#bbb">—</span>`}
                     </div>
                 </td>
+                <td>${etatBadge(t.etat)}</td>
                 <td>${fonctionnelBadge(t.fonctionnel)}</td>
-                <td>
-                    <button class="btn-edit" onclick="ouvrirModal(${i})">
-                        <i class="ti ti-edit" aria-hidden="true"></i> Éditer
-                    </button>
-                </td>
+                <td><button class="btn-edit" onclick="ouvrirModal(${i})"><i class="ti ti-edit"></i> Éditer</button></td>
             </tr>
         `).join('');
     }
@@ -839,7 +600,7 @@
         if (e.target === this) fermerModal();
     });
 
-    render();
+    charger();
 </script>
 </body>
 </html>
