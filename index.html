@@ -591,13 +591,30 @@
         }
     }
 
-    function sauvegarder() {
-        // ... (ton code de récupération des inputs reste identique) ...
+function sauvegarder() {
+        let varPart = document.getElementById('mIdSuffix').value;
+        if (varPart.length !== VAR_LEN) {
+            document.getElementById('idError').style.display = 'block';
+            document.getElementById('idWrapper').style.borderColor = 'var(--tcl-red)';
+            return;
+        }
+        let index = parseInt(document.getElementById('editIndex').value);
+        let fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
+        let ticket = {
+            id: document.getElementById('mId').value,
+            suffixe: document.getElementById('mSuffixe').value,
+            format: document.getElementById('mFormat').value,
+            contenu: document.getElementById('mContenu').value,
+            zones: document.getElementById('mZones').value,
+            quantite: document.getElementById('mQte').value,
+            emprunteur: document.getElementById('mEmp').value,
+            fonctionnel: fonctionnel
+        };
         
-        // Après avoir mis à jour ton tableau tickets :
         if (index === -1) tickets.push(ticket); else tickets[index] = ticket;
         
-        syncAPI(); // Envoie au cloud
+        // Ajout de l'appel à syncAPI ici
+        syncAPI(); 
         fermerModal(); 
         render();
     }
@@ -605,7 +622,9 @@
     function supprimer() {
         let index = parseInt(document.getElementById('editIndex').value);
         tickets.splice(index, 1);
-        syncAPI(); // Envoie la suppression au cloud
+        
+        // Ajout de l'appel à syncAPI ici
+        syncAPI(); 
         fermerModal(); 
         render();
     }
