@@ -563,35 +563,58 @@
 
 <script>
     const API_URL = 'https://api.npoint.io/31ba31f685940c724c54';
-    const PREFIX = '06-14988599';
-    const VAR_LEN = 12;
     let tickets = [];
 
+    // --- INITIALISATION ---
     async function init() {
-            try {
-                const response = await fetch(API_URL);
-                tickets = await response.json();
-            } catch (e) {
-                console.error("Erreur de chargement, passage en mode local");
-                tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
-            }
-            render();
-        }
-        init(); // Appel de la fonction au démarrage
-        async function syncAPI() {
+        console.log("Tentative de connexion à l'API...");
         try {
-            await fetch(API_URL, {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error(`HTTP erreur: ${response.status}`);
+            
+            const json = await response.json();
+            // On vérifie si ton JSON est un tableau pur ou un objet {data: []}
+            tickets = Array.isArray(json) ? json : (json.data || []);
+            
+            console.log("%c Lié avec JSON : Succès", "color: green; font-weight: bold;");
+            console.log("Données récupérées :", tickets);
+        } catch (e) {
+            console.error("%c Erreur : Impossible de lier l'API", "color: red; font-weight: bold;");
+            console.error("Détail de l'erreur :", e);
+            tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
+        }
+        render();
+    }
+
+    // --- SAUVEGARDE ---
+    async function syncAPI() {
+        console.log("Tentative d'écriture vers l'API...");
+        try {
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(tickets)
+                body: JSON.stringify(tickets) // On envoie le tableau brut
             });
-            localStorage.setItem('mesTickets', JSON.stringify(tickets)); // Sauvegarde locale de secours
+
+            if (response.ok) {
+                console.log("%c Succès : Données écrites dans le JSON", "color: green; font-weight: bold;");
+                localStorage.setItem('mesTickets', JSON.stringify(tickets));
+            } else {
+                throw new Error(`Serveur a répondu : ${response.status}`);
+            }
         } catch (e) {
-            alert("Erreur de sauvegarde : vérifie ta connexion internet.");
+            console.error("%c Erreur : Impossible d'écrire dans le JSON", "color: red; font-weight: bold;");
+            console.error("Détail :", e);
+            alert("Erreur de sauvegarde : consulte la console (F12)");
         }
     }
 
-function sauvegarder() {
+    // Appelle init au démarrage
+    init();
+
+    // --- RESTE DE TES FONCTIONS (sauvegarder, supprimer, etc.) ---
+    // Assure-toi que ces fonctions appellent bien syncAPI() à la fin
+    function sauvegarder() {
         let varPart = document.getElementById('mIdSuffix').value;
         if (varPart.length !== VAR_LEN) {
             document.getElementById('idError').style.display = 'block';
