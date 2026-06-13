@@ -435,7 +435,7 @@
     </div>
     <h1>Gestion des tickets</h1>
     <button class="btn-add" onclick="ouvrirModal()">
-        <i class="ti ti-plus" aria-hidden="true"></i> Ajouter un ticket
+        <i class="ti ti-plus" aria-hidden="true"></i> Ajouter un Ticket
     </button>
 </div>
 
@@ -563,7 +563,22 @@
 
 <script>
     const API_URL = 'https://api.npoint.io/31ba31f685940c724c54';
-    let tickets = [];
+    // Remplace ton ancien "let tickets = [];" par ceci :
+    let tickets = new Proxy([], {
+        set(target, property, value) {
+            target[property] = value;
+            // Dès qu'une valeur change dans le tableau, on lance la sync
+            if (property !== 'length') { 
+                syncAPI(); 
+            }
+            return true;
+        }
+    });
+    
+    // Ajoute cette fonction pour pouvoir vider/remplacer le tableau proprement
+    function updateTickets(newArray) {
+        tickets.splice(0, tickets.length, ...newArray);
+    }
 
     // --- INITIALISATION ---
     async function init() {
