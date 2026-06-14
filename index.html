@@ -794,11 +794,14 @@
         const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
         const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
 
+        const economies = (nbOk * 0.20).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
+
         document.getElementById('statsBar').innerHTML = `
             <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
             <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
             <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
             <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
+            <div class="stat-card"><div class="label">Économies réalisées</div><div class="value" style="color:#2e7d32;font-size:18px">${economies}</div></div>
         `;
 
         majIconesTri();
