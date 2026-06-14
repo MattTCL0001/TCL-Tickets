@@ -54,25 +54,28 @@
         .stat-card { background: white; border-radius: 10px; padding: 0.85rem 1.25rem; border: 0.5px solid #dde3ee; min-width: 130px; }
         /* Pour le label : style avec wdth 87.5, GRAD 100, ROND 66 */
         /* Pour tes labels (wdth 87.5, GRAD 100, ROND 66) */
-        .stat-card .label {font-family: "Google Sans Flex", sans-serif;
+        .stat-card .label {
+            font-family: "Google Sans Flex", sans-serif;
+            font-optical-sizing: auto;
         
             font-weight: 400;
-            font-stretch: 87.5%;
         
             font-variation-settings:
+                "wdth" 87.5,
                 "GRAD" 100,
-                "ROND" 66;
+                "ROND" 66,
+                "slnt" 0;
         }
         
-        /* Pour tes valeurs (wdth 151, weight 830, slnt -10) */
-        .stat-card .value {font-family: "Google Sans Flex", sans-serif;
+        .stat-card .value {
+            font-family: "Google Sans Flex", sans-serif;
+            font-optical-sizing: auto;
         
             font-weight: 830;
-            font-stretch: 151%;
-        
-            font-style: oblique 10deg;
         
             font-variation-settings:
+                "wdth" 151,
+                "slnt" -10,
                 "GRAD" 0,
                 "ROND" 0;
         }
