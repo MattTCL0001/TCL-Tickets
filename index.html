@@ -367,11 +367,27 @@
         <div class="form-group">
             <label class="form-label-sm">Numéro de ticket <span id="idCounter" style="font-weight:400;color:#9aa5be;letter-spacing:0">(0/12 chiffres)</span></label>
             <div style="display:flex;align-items:center;border:0.5px solid #ccd3e0;border-radius:8px;overflow:hidden;background:white" id="idWrapper">
-                <span style="padding:0.55rem 0.7rem 0.55rem 0.85rem;font-family:monospace;font-size:0.875rem;color:#9aa5be;background:#f8f9fc;border-right:0.5px solid #ccd3e0;white-space:nowrap;user-select:none">06-14988599</span>
+                <span style="
+                    padding:0.55rem 0.7rem 0.55rem 0.85rem;
+                    font-family:'Google Sans Flex', sans-serif;
+                    font-optical-sizing:auto;
+                    font-weight:380;
+                    font-style:normal;
+                    font-variation-settings:'slnt' 0,'wdth' 75,'GRAD' 0,'ROND' 100; font-size:0.875rem; color:#9aa5be; background:#f8f9fc; border-right:0.5px solid #ccd3e0;white-space:nowrap; user-select:none">
+                    06-14988599
+                </span>
+            
                 <input type="text" id="mIdSuffix" placeholder="000000000000" maxlength="12"
-                    style="border:none;outline:none;flex:1;padding:0.55rem 0.85rem;font-family:monospace;font-size:0.875rem;color:#1a1a2e;background:transparent;width:100%"
-                    oninput="onIdInput(this)">
-            </div>
+                    style="
+                    border:none;
+                    outline:none;
+                    flex:1;
+                    padding:0.55rem 0.85rem;
+                    font-family:'Google Sans Flex', sans-serif;
+                    font-optical-sizing:auto;
+                    font-weight:380;
+                    font-style:normal;
+                    font-variation-settings:'slnt' 0,'wdth' 75,'GRAD' 0,'ROND' 100; font-size:0.875rem; color:#1a1a2e; background:transparent; width:100%"oninput="onIdInput(this)"></div>
             <input type="hidden" id="mId">
             <div id="idError" style="font-size:11px;color:var(--tcl-red);margin-top:3px;display:none"></div>
         </div>
