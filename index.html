@@ -187,6 +187,40 @@
         #fOui:checked + label { background: #e8f5e9; color: #2e7d32; }
         #fNon:checked + label { background: #fce8eb; color: #b50015; }
 
+        /* ── Barre de recherche ── */
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: width 0.3s, background 0.2s;
+            width: 220px;
+        }
+        .search-wrap:focus-within {
+            background: rgba(255,255,255,0.28);
+        }
+        .search-icon-btn {
+            background: none; border: none; color: white;
+            padding: 0 10px; cursor: pointer; display: flex; align-items: center;
+            font-size: 1rem; opacity: 0.85; flex-shrink: 0; height: 34px;
+        }
+        .search-input {
+            background: none; border: none; outline: none;
+            color: white; font-size: 0.85rem; width: 100%;
+            padding: 0 8px 0 0;
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+        .search-input::-webkit-search-cancel-button { display: none; }
+
+        @media (max-width: 860px) {
+            .search-wrap { width: 36px; }
+            .search-wrap:focus-within { width: 180px; }
+            .search-input { width: 0; padding: 0; transition: width 0.3s, padding 0.3s; }
+            .search-wrap:focus-within .search-input { width: 140px; padding: 0 8px 0 0; }
+        }
+
         /* ── Responsive table ── */
         .text-collapse { display: inline; }
         @media (max-width: 1100px) {
@@ -216,6 +250,12 @@
     </div>
     <h1>Gestion des tickets</h1>
     <div id="syncStatus" class="sync-status idle"><i class="ti ti-cloud"></i> <span>Synchronisé</span></div>
+    <div class="search-wrap">
+        <button class="search-icon-btn" onclick="document.getElementById('searchInput').focus()" tabindex="-1">
+            <i class="ti ti-search"></i>
+        </button>
+        <input type="search" id="searchInput" class="search-input" placeholder="Suffixe, contenu…" oninput="render()">
+    </div>
     <button class="btn-add" onclick="ouvrirModal()"><i class="ti ti-plus"></i> Ajouter un ticket</button>
 </div>
 
@@ -551,16 +591,19 @@
             setDropdownDisabled('Zones', false);
         }
 
-        // Quantité : bloqué si Vide, libre si Inconnu, obligatoire sinon
+        // Quantité : bloqué si Vide ou Inconnu → tiret, obligatoire sinon
         const qteInp = document.getElementById('mQte');
         const qteReq = document.getElementById('qteRequired');
         if (isVide) {
             qteInp.value = '0'; qteInp.disabled = true;
             qteReq.style.display = 'none';
+        } else if (isInconnu) {
+            qteInp.value = '—'; qteInp.disabled = true;
+            qteReq.style.display = 'none';
         } else {
             qteInp.disabled = false;
-            qteReq.style.display = isInconnu ? 'none' : 'inline';
-            if (qteInp.value === '0') qteInp.value = '';
+            qteReq.style.display = 'inline';
+            if (qteInp.value === '0' || qteInp.value === '—') qteInp.value = '';
         }
     }
 
