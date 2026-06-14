@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@8..144,1..1000">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,slnt,wdth,wght,GRAD,ROND@6..144,-10..0,25..151,1..1000,0..150,0..100&display=swap" rel="stylesheet">
     <style>
         :root {
             --tcl-red: #E2001A;
@@ -55,12 +55,11 @@
         /* Pour le label : style avec wdth 87.5, GRAD 100, ROND 66 */
         /* Pour tes labels (wdth 87.5, GRAD 100, ROND 66) */
         .stat-card .label {
-            font-family: "Google Sans Flex", sans-serif;
+            font-family: inherit;
             font-optical-sizing: auto;
         
-            font-weight: 400;
-        
             font-variation-settings:
+                "wght" 400,
                 "wdth" 87.5,
                 "GRAD" 100,
                 "ROND" 66,
@@ -68,15 +67,15 @@
         }
         
         .stat-card .value {
-            font-family: "Google Sans Flex", sans-serif;
+            font-family: inherit;
             font-optical-sizing: auto;
         
             font-variation-settings:
                 "wght" 692,
                 "wdth" 125,
-                "slnt" -8,
                 "GRAD" 0,
-                "ROND" 0;
+                "ROND" 0,
+                "slnt" -8;
         }
 
         /* ── Table ── */
@@ -258,26 +257,26 @@
             .btn-edit { padding: 5px 8px; }
         }
         .drop-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); display: inline-block; }
-        .id-style {font-family: "Google Sans Flex", sans-serif;
-        
-            font-weight: 72;
-            font-stretch: 50%;
+        .id-style {
+            font-family: inherit;
         
             font-variation-settings:
+                "wght" 72,
+                "wdth" 50,
                 "GRAD" 0,
-                "ROND" 0;
+                "ROND" 0,
+                "slnt" 0;
         }
         
-        .suffixe-style {font-family: "Google Sans Flex", sans-serif;
-        
-            font-weight: 230;
-            font-stretch: 76%;
-        
-            font-style: oblique 5deg;
+        .suffixe-style {
+            font-family: inherit;
         
             font-variation-settings:
+                "wght" 230,
+                "wdth" 76,
+                "GRAD" 0,
                 "ROND" 75,
-                "GRAD" 0;
+                "slnt" -5;
         }
     </style>
 </head>
