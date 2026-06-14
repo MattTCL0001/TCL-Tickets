@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wdth,wght,slnt,GRAD,ROND@50..76,72..230,-5..0,0,0..75&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wdth,wght,slnt,GRAD,ROND@0..1000,0..1000,-10..10,0..100,0..100&display=swap" rel="stylesheet">
     <style>
         :root {
             --tcl-red: #E2001A;
@@ -51,8 +51,23 @@
         .content-area { padding: 0 2rem 2rem; }
         .stats-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
         .stat-card { background: white; border-radius: 10px; padding: 0.85rem 1.25rem; border: 0.5px solid #dde3ee; min-width: 130px; }
-        .stat-card .label { font-size: 12px; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
-        .stat-card .value { font-size: 22px; font-weight: 600; color: var(--tcl-red); }
+        /* Pour le label : style avec wdth 87.5, GRAD 100, ROND 66 */
+        .stat-card .label {font-family: "Google Sans Flex", sans-serif; font-size: 12px;color: #6b7a99;text-transform: uppercase;letter-spacing: 0.04em; margin-bottom: 4px;
+          /* Paramètres spécifiques */
+          font-weight: 400; /* Valeur par défaut adaptée */
+          font-variation-settings: "slnt" 0, "wdth" 87.5, "GRAD" 100, "ROND" 66;
+        }
+        
+        /* Pour la valeur : style avec wdth 151, weight 830, slnt -10 */
+        .stat-card .value {
+          font-family: "Google Sans Flex", sans-serif;
+          font-size: 22px;
+          color: var(--tcl-red);
+          
+          /* Paramètres spécifiques */
+          font-weight: 830;
+          font-variation-settings: "slnt" -10, "wdth" 151, "GRAD" 0, "ROND" 0;
+        }
 
         /* ── Table ── */
         .table-card { background: white; border-radius: 12px; border: 0.5px solid #dde3ee; overflow: hidden; }
@@ -142,14 +157,6 @@
         input.form-control:disabled { background: #f4f4f4; color: #aaa; cursor: not-allowed; }
         input.form-control.field-error { border-color: var(--tcl-red); }
         
-        .custom-font-id {
-            font-family: 'Google Sans Flex Variable', sans-serif;
-            font-variation-settings: 'wdth' 50, 'wght' 72, 'GRAD' 0;
-          }
-          .custom-font-suffixe {
-            font-family: 'Google Sans Flex Variable', sans-serif;
-            font-variation-settings: 'wdth' 76, 'wght' 230, 'slnt' -5, 'ROND' 75;
-          }
         /* ── Dropdown custom ── */
         .custom-select-wrap { position: relative; }
         .custom-select-btn {
@@ -873,7 +880,7 @@
             <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
             <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
             <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
-            <div class="stat-card"><div class="label">Économies réalisées</div><div class="value" style="color:#2e7d32;font-size:18px">${economies}</div></div>
+            <div class="stat-card"><div class="label">Économies réalisées</div><div class="value" style="color:#2e7d32">${economies}</div></div>
         `;
 
         majIconesTri();
