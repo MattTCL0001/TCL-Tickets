@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wdth,wght,slnt,GRAD,ROND@50..76,72..230,-5..0,0,0..75&display=swap" rel="stylesheet">
     <style>
         :root {
             --tcl-red: #E2001A;
@@ -243,26 +243,14 @@
         .drop-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); display: inline-block; }
         .id-style {
           font-family: "Google Sans Flex", sans-serif;
-          font-optical-sizing: auto;
-          font-weight: 72; /* Tu avais demandé 72 de weight */
-          font-style: normal;
-          font-variation-settings:
-            "wdth" 50,
-            "GRAD" 0,
-            "slnt" 0,
-            "ROND" 0;
+          font-weight: 72; /* Valeur de base */
+          font-variation-settings: "wdth" 50, "wght" 72, "GRAD" 0, "slnt" 0, "ROND" 0;
         }
         
         .suffixe-style {
           font-family: "Google Sans Flex", sans-serif;
-          font-optical-sizing: auto;
-          font-weight: 230; /* Tu avais demandé 230 de weight */
-          font-style: normal;
-          font-variation-settings:
-            "slnt" -5,
-            "wdth" 76,
-            "GRAD" 0,
-            "ROND" 75; /* Ton réglage de 75% de rondeur */
+          font-weight: 230; /* Valeur de base */
+          font-variation-settings: "wdth" 76, "wght" 230, "slnt" -5, "GRAD" 0, "ROND" 75;
         }
     </style>
 </head>
