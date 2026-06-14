@@ -300,6 +300,17 @@
                 "ROND" 75,
                 "slnt" -5;
         }
+        .contenu-style {
+            font-family: "Google Sans Flex", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 139;
+            font-style: normal;
+            font-variation-settings:
+                "slnt" 0,
+                "wdth" 70,
+                "GRAD" 0,
+                "ROND" 0;
+        }
     </style>
 </head>
 <body>
@@ -949,7 +960,7 @@
                 <td class="id-style" style="color: var(--tcl-red)">${t.id || '—'}</td>
                 <td class="suffixe-style" style="color: #6b7a99">${t.suffixe || '—'}</td>
                 <td><span class="badge-format ${formatClass(t.format)}">${t.format || '—'}</span></td>
-                <td style="color:#2d3748">${t.contenu || '—'}</td>
+                <td class="contenu-style" style="color:#2d3748">${t.contenu || '—'}</td>
                 <td>
                     <div class="zones-cell">
                         ${zonesDots(t.zones)}
