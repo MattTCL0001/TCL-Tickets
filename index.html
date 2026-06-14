@@ -861,8 +861,8 @@
 
         tbody.innerHTML = getTicketsTries().map(({t, i}) => `
             <tr>
-                <td style="font-family:monospace;font-weight:600;color:var(--tcl-red)">${t.id || '—'}</td>
-                <td style="font-family:monospace;color:#6b7a99">${t.suffixe || '—'}</td>
+                <td style="font-family: 'Google Sans Flex', sans-serif; font-variation-settings: 'wdth' 50, 'wght' 72, 'GRAD' 0; color: var(--tcl-red)">${t.id || '—'}</td>
+                <td style="font-family: 'Google Sans Flex', sans-serif; font-variation-settings: 'wdth' 76, 'wght' 230, 'slnt' -5; border-radius: 75%; color: #6b7a99">${t.suffixe || '—'}</td>
                 <td><span class="badge-format ${formatClass(t.format)}">${t.format || '—'}</span></td>
                 <td style="color:#2d3748">${t.contenu || '—'}</td>
                 <td>
