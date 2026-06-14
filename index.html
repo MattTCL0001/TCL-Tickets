@@ -11,123 +11,91 @@
             --tcl-red-dark: #b50015;
             --tcl-red-light: #fce8eb;
         }
+        body { background: #f4f6fa; font-family: system-ui, sans-serif; color: #1a1a2e; }
 
-        body {
-            background: #f4f6fa;
-            font-family: system-ui, sans-serif;
-            color: #1a1a2e;
-        }
-
+        /* ── Header ── */
         .page-header {
-            color: white;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding-right: 2rem;
-            position: relative;
-            z-index: 1;
+            color: white; height: 72px; display: flex; align-items: center;
+            gap: 1rem; margin-bottom: 2rem; padding-right: 2rem;
+            position: relative; z-index: 1;
         }
-
         .page-header::before {
-            content: "";
-            position: absolute;
+            content: ""; position: absolute;
             top: 0; left: 100px; right: 0; bottom: 0;
-            background: var(--tcl-red);
-            z-index: -1;
+            background: var(--tcl-red); z-index: -1;
         }
-
         .header-svg-wrap { height: 100%; flex-shrink: 0; display: flex; align-items: stretch; }
         .header-svg-wrap svg { height: 100%; width: auto; display: block; }
-
         .page-header h1 { font-size: 1.1rem; font-weight: 600; margin: 0; opacity: 0.95; }
-
         .page-header .btn-add {
-            margin-left: auto;
-            background: white;
-            color: var(--tcl-red);
-            border: none;
-            font-weight: 700;
-            padding: 0.5rem 1.25rem;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.9rem;
-            transition: opacity 0.15s;
-            white-space: nowrap;
+            margin-left: auto; background: white; color: var(--tcl-red);
+            border: none; font-weight: 700; padding: 0.5rem 1.25rem; border-radius: 8px;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            font-size: 0.9rem; transition: opacity 0.15s; white-space: nowrap;
         }
         .page-header .btn-add:hover { opacity: 0.85; }
 
+        /* ── Sync ── */
         .sync-status {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-            transition: all 0.3s;
+            font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+            display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: all 0.3s;
         }
-        .sync-status.idle    { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
-        .sync-status.saving  { background: rgba(255,255,255,0.25); color: white; }
-        .sync-status.ok      { background: #e8f5e9; color: #2e7d32; }
-        .sync-status.error   { background: #fce8eb; color: #b50015; }
+        .sync-status.idle   { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+        .sync-status.saving { background: rgba(255,255,255,0.25); color: white; }
+        .sync-status.ok     { background: #e8f5e9; color: #2e7d32; }
+        .sync-status.error  { background: #fce8eb; color: #b50015; }
 
+        /* ── Layout ── */
         .content-area { padding: 0 2rem 2rem; }
         .stats-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 0.85rem 1.25rem;
-            border: 0.5px solid #dde3ee;
-            min-width: 130px;
-        }
+        .stat-card { background: white; border-radius: 10px; padding: 0.85rem 1.25rem; border: 0.5px solid #dde3ee; min-width: 130px; }
         .stat-card .label { font-size: 12px; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
         .stat-card .value { font-size: 22px; font-weight: 600; color: var(--tcl-red); }
 
+        /* ── Table ── */
         .table-card { background: white; border-radius: 12px; border: 0.5px solid #dde3ee; overflow: hidden; }
         .table-card table { margin: 0; font-size: 0.875rem; }
-
         .table-card thead th {
-            background: #f8f9fc;
-            color: #6b7a99;
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 0.85rem 1rem;
-            border-bottom: 0.5px solid #dde3ee;
-            border-top: none;
-            cursor: pointer;
-            user-select: none;
-            transition: color 0.15s;
-            white-space: nowrap;
+            background: #f8f9fc; color: #6b7a99; font-weight: 600; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 0.06em; padding: 0.85rem 1rem;
+            border-bottom: 0.5px solid #dde3ee; border-top: none;
+            cursor: pointer; user-select: none; transition: color 0.15s; white-space: nowrap;
         }
         .table-card thead th:hover { color: var(--tcl-red); }
         .table-card thead th.no-sort,
         .table-card thead th.no-sort:hover { cursor: default; color: #6b7a99; }
         .table-card thead th.sorted-col { color: var(--tcl-red); }
-
         .sort-icon { margin-left: 4px; font-size: 13px; opacity: 0.35; vertical-align: middle; }
         .sort-icon.active { opacity: 1; }
-
         .table-card tbody td { padding: 0.75rem 1rem; border-color: #f0f2f7; vertical-align: middle; }
         .table-card tbody tr:hover td { background: #fdf5f6; }
 
-        .badge-format { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; background: var(--tcl-red-light); color: var(--tcl-red-dark); }
-        .badge-zones  { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; background: #fff3e0; color: #b45309; }
+        /* ── Badges Format ── */
+        .badge-format {
+            display: inline-block; padding: 3px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+        }
+        .badge-format.rouge  { background: #fce8eb; color: #b50015; }
+        .badge-format.bleu   { background: #e3eefe; color: #1a56c4; }
+        .badge-format.rose   { background: #fde8f5; color: #b5006b; }
+        .badge-format.orange { background: #fff0e0; color: #b55a00; }
+        .badge-format.grey   { background: #f0f0f0; color: #555; }
 
+        /* ── Pastilles zones ── */
+        .zones-cell { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .zone-dot {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+            display: inline-block; border: 1px solid rgba(0,0,0,0.12);
+        }
+        .zone-label { font-size: 12px; color: #4a5568; }
+
+        /* ── Badge fonctionnel ── */
         .badge-etat {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
         }
-        .badge-etat.ok  { background: #e8f5e9; color: #2e7d32; }
-        .badge-etat.ko  { background: #fce8eb; color: #b50015; }
+        .badge-etat.ok { background: #e8f5e9; color: #2e7d32; }
+        .badge-etat.ko { background: #fce8eb; color: #b50015; }
 
         .btn-edit {
             background: transparent; border: 0.5px solid #ccd3e0; color: #4a5568;
@@ -139,104 +107,72 @@
         .empty-state { text-align: center; padding: 3rem 1rem; color: #9aa5be; }
         .empty-state i { font-size: 3rem; display: block; margin-bottom: 1rem; }
 
+        /* ── Modal ── */
         #myModal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15,23,60,0.55); z-index: 1050; align-items: center; justify-content: center;
         }
         #myModal.open { display: flex; }
-
         .modal-box {
             background: white; border-radius: 14px; padding: 1.75rem;
-            width: 100%; max-width: 500px;
+            width: 100%; max-width: 520px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.18); max-height: 92vh; overflow-y: auto;
         }
-
         .modal-header-custom { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
         .modal-header-custom h5 { font-size: 1.05rem; font-weight: 600; margin: 0; color: var(--tcl-red); display: flex; align-items: center; gap: 7px; }
-
         .modal-close { background: none; border: none; color: #9aa5be; cursor: pointer; font-size: 1.3rem; padding: 2px; line-height: 1; }
         .modal-close:hover { color: #4a5568; }
-
         .form-label-sm { font-size: 12px; font-weight: 600; color: #6b7a99; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; display: block; }
         .form-group { margin-bottom: 1rem; }
-
         .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 0.5px solid #eef0f6; }
-
         .btn-save { background: var(--tcl-red); color: white; border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 700; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 6px; flex: 1; justify-content: center; transition: background 0.15s; }
         .btn-save:hover { background: var(--tcl-red-dark); }
-
         .btn-delete { background: #fff1f0; color: #c0392b; border: 0.5px solid #f5c6c2; border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 600; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
         .btn-delete:hover { background: #ffe4e2; }
-
         .btn-cancel { background: #f4f6fa; color: #4a5568; border: none; border-radius: 8px; padding: 0.6rem 1rem; font-weight: 500; font-size: 0.875rem; cursor: pointer; }
         .btn-cancel:hover { background: #e8eaf0; }
 
-        input.form-control, select.form-select {
+        input.form-control {
             border-radius: 8px; border: 0.5px solid #ccd3e0;
             font-size: 0.875rem; padding: 0.55rem 0.85rem; color: #1a1a2e;
         }
-        input.form-control:focus { border-color: var(--tcl-red); box-shadow: 0 0 0 3px rgba(226,0,26,0.1); }
+        input.form-control:focus { border-color: var(--tcl-red); box-shadow: 0 0 0 3px rgba(226,0,26,0.1); outline: none; }
         input.form-control:disabled { background: #f4f4f4; color: #aaa; cursor: not-allowed; }
+        input.form-control.field-error { border-color: var(--tcl-red); }
 
         /* ── Dropdown custom ── */
         .custom-select-wrap { position: relative; }
-
         .custom-select-btn {
-            width: 100%;
-            border: 0.5px solid #ccd3e0;
-            border-radius: 8px;
-            padding: 0.55rem 2.2rem 0.55rem 0.85rem;
-            font-size: 0.875rem;
-            color: #1a1a2e;
-            background: white;
-            cursor: pointer;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            transition: border-color 0.15s;
-            user-select: none;
-            min-height: 36px;
+            width: 100%; border: 0.5px solid #ccd3e0; border-radius: 8px;
+            padding: 0.55rem 2.2rem 0.55rem 0.85rem; font-size: 0.875rem;
+            color: #1a1a2e; background: white; cursor: pointer; text-align: left;
+            display: flex; align-items: center; justify-content: space-between; gap: 6px;
+            transition: border-color 0.15s; user-select: none; min-height: 36px;
         }
         .custom-select-btn:focus { outline: none; border-color: var(--tcl-red); box-shadow: 0 0 0 3px rgba(226,0,26,0.1); }
         .custom-select-btn.placeholder { color: #9aa5be; }
         .custom-select-btn .chevron { font-size: 14px; color: #9aa5be; flex-shrink: 0; transition: transform 0.2s; }
         .custom-select-btn.open .chevron { transform: rotate(180deg); }
         .custom-select-btn.disabled-field { background: #f4f4f4; color: #aaa; cursor: not-allowed; pointer-events: none; }
-
+        .custom-select-btn.field-error { border-color: var(--tcl-red); }
         .custom-dropdown {
-            position: absolute;
-            top: calc(100% + 4px);
-            left: 0; right: 0;
-            background: white;
-            border: 0.5px solid #dde3ee;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            z-index: 2000;
-            max-height: 220px;
-            overflow-y: auto;
-            display: none;
-            padding: 4px;
+            position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+            background: white; border: 0.5px solid #dde3ee; border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 2000;
+            max-height: 220px; overflow-y: auto; display: none; padding: 4px;
         }
         .custom-dropdown.open { display: block; }
-
         .custom-dropdown-item {
-            padding: 0.5rem 0.85rem;
-            font-size: 0.875rem;
-            border-radius: 7px;
-            cursor: pointer;
-            color: #1a1a2e;
-            transition: background 0.1s;
+            padding: 0.5rem 0.85rem; font-size: 0.875rem; border-radius: 7px;
+            cursor: pointer; color: #1a1a2e; transition: background 0.1s;
+            display: flex; align-items: center; gap: 7px;
         }
         .custom-dropdown-item:hover { background: #f4f6fa; }
         .custom-dropdown-item.selected { background: var(--tcl-red-light); color: var(--tcl-red-dark); font-weight: 600; }
-        .custom-dropdown-item.placeholder-item { color: #9aa5be; font-style: italic; }
+        .custom-dropdown-item.placeholder-item { color: #9aa5be; font-style: italic; pointer-events: none; opacity: 0.6; }
 
         .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-
         .suffix-display { font-family: monospace; background: #f8f9fc; border: 0.5px solid #dde3ee; border-radius: 8px; padding: 0.55rem 0.85rem; font-size: 0.95rem; color: var(--tcl-red); font-weight: 700; letter-spacing: 0.1em; }
-
         .emprunteur-cell { display: flex; align-items: center; gap: 7px; }
         .emp-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--tcl-red-light); color: var(--tcl-red-dark); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
@@ -248,10 +184,11 @@
             transition: all 0.15s; color: #9aa5be; background: white; border: none; margin: 0;
         }
         .toggle-group label:not(:last-child) { border-right: 0.5px solid #ccd3e0; }
-
-        /* Fonctionnel */
         #fOui:checked + label { background: #e8f5e9; color: #2e7d32; }
         #fNon:checked + label { background: #fce8eb; color: #b50015; }
+
+        /* pastilles inline dans dropdown zones */
+        .drop-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); display: inline-block; }
     </style>
 </head>
 <body>
@@ -271,9 +208,7 @@
     </div>
     <h1>Gestion des tickets</h1>
     <div id="syncStatus" class="sync-status idle"><i class="ti ti-cloud"></i> <span>Synchronisé</span></div>
-    <button class="btn-add" onclick="ouvrirModal()">
-        <i class="ti ti-plus"></i> Ajouter un ticket
-    </button>
+    <button class="btn-add" onclick="ouvrirModal()"><i class="ti ti-plus"></i> Ajouter un ticket</button>
 </div>
 
 <div class="content-area">
@@ -309,9 +244,9 @@
             <h5 id="modalTitle"><i class="ti ti-ticket"></i> Nouveau ticket</h5>
             <button class="modal-close" onclick="fermerModal()"><i class="ti ti-x"></i></button>
         </div>
-
         <input type="hidden" id="editIndex">
 
+        <!-- Numéro -->
         <div class="form-group">
             <label class="form-label-sm">Numéro de ticket <span id="idCounter" style="font-weight:400;color:#9aa5be;letter-spacing:0">(0/12 chiffres)</span></label>
             <div style="display:flex;align-items:center;border:0.5px solid #ccd3e0;border-radius:8px;overflow:hidden;background:white" id="idWrapper">
@@ -321,16 +256,48 @@
                     oninput="onIdInput(this)">
             </div>
             <input type="hidden" id="mId">
-            <div id="idError" style="font-size:11px;color:var(--tcl-red);margin-top:3px;display:none">12 chiffres requis (chiffres uniquement)</div>
+            <div id="idError" style="font-size:11px;color:var(--tcl-red);margin-top:3px;display:none"></div>
         </div>
 
+        <!-- Suffixe -->
         <div class="form-group">
             <label class="form-label-sm">Suffixe (caractères 18–23)</label>
             <div class="suffix-display" id="mSuffixeDisplay">—</div>
             <input type="hidden" id="mSuffixe">
         </div>
 
+        <!-- Ligne 1 : Contenu | Format -->
         <div class="row-2col">
+            <div class="form-group">
+                <label class="form-label-sm">Contenu</label>
+                <div class="custom-select-wrap" id="wrapContenu">
+                    <button type="button" class="custom-select-btn placeholder" id="btnContenu" onclick="toggleDropdown('Contenu')">
+                        <span id="lblContenu">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
+                    </button>
+                    <div class="custom-dropdown" id="dropContenu">
+                        <div class="custom-dropdown-item placeholder-item">Sélectionner…</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Vide')">Vide</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Inconnu')">Inconnu</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage')">1 voyage</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage à bord')">1 voyage à bord</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages')">10 voyages</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages (-26 ans/étudiants)')">10 voyages (-26 ans/étudiants)</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages famille nombreuse')">10 voyages famille nombreuse</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 24h')">Pass 24h</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 48h')">Pass 48h</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 72h')">Pass 72h</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 7 jours')">Pass 7 jours</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass tribu')">Pass tribu</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Groupe 10 personnes')">Groupe 10 personnes</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller simple Navigône')">Aller simple Navigône</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Navigône')">Aller-retour Navigône</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Funiculaire')">Aller-retour Funiculaire</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass TCL en fête')">Pass TCL en fête</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass Pic Pollution')">Pass Pic Pollution</div>
+                    </div>
+                    <input type="hidden" id="mContenu">
+                </div>
+            </div>
             <div class="form-group">
                 <label class="form-label-sm">Format</label>
                 <div class="custom-select-wrap" id="wrapFormat">
@@ -338,19 +305,23 @@
                         <span id="lblFormat">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
                     </button>
                     <div class="custom-dropdown" id="dropFormat">
-                        <div class="custom-dropdown-item placeholder-item" onclick="selectOption('Format','')">Sélectionner…</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','DAB')">DAB</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rose Bus')">Rose Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Bleu Bus')">Bleu Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Orange Bus')">Orange Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Vert Bus')">Vert Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Agence')">Agence</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Paris 2024')">Paris 2024</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rectangle')">Rectangle</div>
+                        <div class="custom-dropdown-item placeholder-item">Sélectionner…</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','DAB')"><span class="drop-dot" style="background:#E2001A"></span>DAB</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rose Bus')"><span class="drop-dot" style="background:#e91e8c"></span>Rose Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Bleu Bus')"><span class="drop-dot" style="background:#1a56c4"></span>Bleu Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Orange Bus')"><span class="drop-dot" style="background:#e07b00"></span>Orange Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Vert Bus')"><span class="drop-dot" style="background:#2e7d32"></span>Vert Bus</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Agence')"><span class="drop-dot" style="background:#E2001A"></span>Agence</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Paris 2024')"><span class="drop-dot" style="background:#1a56c4"></span>Paris 2024</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rectangle')"><span class="drop-dot" style="background:#E2001A"></span>Rectangle</div>
                     </div>
                     <input type="hidden" id="mFormat">
                 </div>
             </div>
+        </div>
+
+        <!-- Ligne 2 : Zones | Quantité -->
+        <div class="row-2col">
             <div class="form-group">
                 <label class="form-label-sm">Zones</label>
                 <div class="custom-select-wrap" id="wrapZones">
@@ -358,64 +329,35 @@
                         <span id="lblZones">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
                     </button>
                     <div class="custom-dropdown" id="dropZones">
-                        <div class="custom-dropdown-item placeholder-item" onclick="selectOption('Zones','')">Sélectionner…</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z1 & 2')">Z1 &amp; 2</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & 3')">Z2 &amp; 3</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & 4')">Z3 &amp; 4</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & 5')">Z4 &amp; 5</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & EXT')">Z2 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & EXT')">Z3 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & EXT')">Z4 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z5 & EXT')">Z5 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones sauf Z1')">Toutes zones sauf Z1</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones')">Toutes zones</div>
+                        <div class="custom-dropdown-item placeholder-item">Sélectionner…</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z1 & 2')"><?xml version="1.0"?><span class="drop-dot" style="background:#E2001A"></span><span class="drop-dot" style="background:#e07b00"></span>Z1 &amp; 2</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & 3')"><span class="drop-dot" style="background:#e07b00"></span><span class="drop-dot" style="background:#2e7d32"></span>Z2 &amp; 3</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & 4')"><span class="drop-dot" style="background:#2e7d32"></span><span class="drop-dot" style="background:#1a56c4"></span>Z3 &amp; 4</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & 5')"><span class="drop-dot" style="background:#1a56c4"></span><span class="drop-dot" style="background:#e91e8c"></span>Z4 &amp; 5</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & EXT')"><span class="drop-dot" style="background:#e07b00"></span><span class="drop-dot" style="background:#f5c518"></span>Z2 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & EXT')"><span class="drop-dot" style="background:#2e7d32"></span><span class="drop-dot" style="background:#f5c518"></span>Z3 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & EXT')"><span class="drop-dot" style="background:#1a56c4"></span><span class="drop-dot" style="background:#f5c518"></span>Z4 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z5 & EXT')"><span class="drop-dot" style="background:#e91e8c"></span><span class="drop-dot" style="background:#f5c518"></span>Z5 &amp; EXT</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones sauf Z1')"><span class="drop-dot" style="background:#7c3aed"></span><span class="drop-dot" style="background:#E2001A"></span>Toutes zones sauf Z1</div>
+                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones')"><span class="drop-dot" style="background:#7c3aed"></span>Toutes zones</div>
                     </div>
                     <input type="hidden" id="mZones">
                 </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label-sm">Contenu</label>
-            <div class="custom-select-wrap" id="wrapContenu">
-                <button type="button" class="custom-select-btn placeholder" id="btnContenu" onclick="toggleDropdown('Contenu')">
-                    <span id="lblContenu">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
-                </button>
-                <div class="custom-dropdown" id="dropContenu">
-                    <div class="custom-dropdown-item placeholder-item" onclick="selectOption('Contenu','')">Sélectionner…</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Vide')">Vide</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage')">1 voyage</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage à bord')">1 voyage à bord</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages')">10 voyages</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages (-26 ans/étudiants)')">10 voyages (-26 ans/étudiants)</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages famille nombreuse')">10 voyages famille nombreuse</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 24h')">Pass 24h</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 48h')">Pass 48h</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 72h')">Pass 72h</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 7 jours')">Pass 7 jours</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass tribu')">Pass tribu</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Groupe 10 personnes')">Groupe 10 personnes</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller simple Navigône')">Aller simple Navigône</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Navigône')">Aller-retour Navigône</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Funiculaire')">Aller-retour Funiculaire</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass TCL en fête')">Pass TCL en fête</div>
-                    <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass Pic Pollution')">Pass Pic Pollution</div>
-                </div>
-                <input type="hidden" id="mContenu">
-            </div>
-        </div>
-
-        <div class="row-2col">
             <div class="form-group">
-                <label class="form-label-sm">Quantité</label>
+                <label class="form-label-sm">Quantité <span id="qteRequired" style="color:var(--tcl-red);display:none">*</span></label>
                 <input type="number" id="mQte" placeholder="ex. 10" class="form-control" min="1">
-            </div>
-            <div class="form-group">
-                <label class="form-label-sm">Emprunteur</label>
-                <input type="text" id="mEmp" placeholder="— si non emprunté" class="form-control">
+                <div id="qteError" style="font-size:11px;color:var(--tcl-red);margin-top:3px;display:none">Quantité requise</div>
             </div>
         </div>
 
+        <!-- Ligne 3 : Emprunteur pleine largeur -->
+        <div class="form-group">
+            <label class="form-label-sm">Emprunteur</label>
+            <input type="text" id="mEmp" placeholder="— si non emprunté" class="form-control">
+        </div>
+
+        <!-- Fonctionnel -->
         <div class="form-group">
             <label class="form-label-sm">Fonctionnel</label>
             <div class="toggle-group">
@@ -435,16 +377,54 @@
 </div>
 
 <script>
-    const API_URL     = 'https://api.npoint.io/31ba31f685940c724c54';
-    const PREFIX      = '06-14988599';
-    const VAR_LEN     = 12;
-    const PRIX_TICKET = 0.20; // économie réalisée par ticket encore fonctionnel
+    const API_URL = 'https://api.npoint.io/31ba31f685940c724c54';
+    const PREFIX  = '06-14988599';
+    const VAR_LEN = 12;
 
     let tickets = [];
-    let sortColumn = null;
+    let sortColumn    = 'id';
     let sortDirection = 'asc';
 
-    /* ── Sync npoint ─────────────────────────────────────── */
+    /* ── Couleurs zones ── */
+    const ZONE_COLORS = {
+        'Z1': '#E2001A', 'Z2': '#e07b00', 'Z3': '#2e7d32',
+        'Z4': '#1a56c4', 'Z5': '#e91e8c', 'HZ': '#f5c518', 'TZ': '#7c3aed'
+    };
+
+    /* Retourne les pastilles HTML pour une valeur de zone */
+    function zonesDots(val) {
+        if (!val || val === '—') return '';
+        const map = {
+            'Z1 & 2':             ['Z1','Z2'],
+            'Z2 & 3':             ['Z2','Z3'],
+            'Z3 & 4':             ['Z3','Z4'],
+            'Z4 & 5':             ['Z4','Z5'],
+            'Z2 & EXT':           ['Z2','HZ'],
+            'Z3 & EXT':           ['Z3','HZ'],
+            'Z4 & EXT':           ['Z4','HZ'],
+            'Z5 & EXT':           ['Z5','HZ'],
+            'Toutes zones sauf Z1':['TZ','Z1'],
+            'Toutes zones':       ['TZ'],
+        };
+        const keys = map[val];
+        if (!keys) return '';
+        return keys.map(k => `<span class="zone-dot" style="background:${ZONE_COLORS[k]}" title="${k}"></span>`).join('');
+    }
+
+    /* ── Couleur badge Format ── */
+    function formatClass(f) {
+        const rouge  = ['DAB','Vert Bus','Agence','Rectangle'];
+        const bleu   = ['Bleu Bus','Paris 2024'];
+        const rose   = ['Rose Bus'];
+        const orange = ['Orange Bus'];
+        if (rouge.includes(f))  return 'rouge';
+        if (bleu.includes(f))   return 'bleu';
+        if (rose.includes(f))   return 'rose';
+        if (orange.includes(f)) return 'orange';
+        return 'grey';
+    }
+
+    /* ── Sync npoint ── */
     function setSync(state, msg) {
         const el = document.getElementById('syncStatus');
         const icons = { idle:'ti-cloud', saving:'ti-cloud-upload', ok:'ti-cloud-check', error:'ti-cloud-x' };
@@ -462,7 +442,6 @@
             localStorage.setItem('mesTickets', JSON.stringify(tickets));
             setSync('ok', 'Synchronisé');
         } catch(e) {
-            console.warn('npoint inaccessible, fallback localStorage', e);
             tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
             setSync('error', 'Hors ligne');
         }
@@ -481,12 +460,11 @@
             if (!r.ok) throw new Error(r.status);
             setSync('ok', 'Synchronisé');
         } catch(e) {
-            console.error('Erreur sync npoint', e);
             setSync('error', 'Erreur sync');
         }
     }
 
-    /* ── Dropdowns custom ────────────────────────────────── */
+    /* ── Dropdowns custom ── */
     function closeAllDropdowns(except) {
         ['Format','Zones','Contenu'].forEach(name => {
             if (name === except) return;
@@ -511,24 +489,25 @@
         const drop = document.getElementById('drop'+name);
 
         inp.value = value;
-        lbl.textContent = value || 'Sélectionner…';
+        // Pour Zones, afficher pastilles + texte dans le bouton
+        if (name === 'Zones' && value) {
+            lbl.innerHTML = zonesDots(value) + '<span style="margin-left:4px">' + value + '</span>';
+        } else {
+            lbl.textContent = value || 'Sélectionner…';
+        }
         btn.classList.toggle('placeholder', !value);
+        btn.classList.remove('field-error');
 
-        // Marquer l'item sélectionné
-        drop.querySelectorAll('.custom-dropdown-item').forEach(el => {
+        drop.querySelectorAll('.custom-dropdown-item:not(.placeholder-item)').forEach(el => {
             el.classList.toggle('selected', el.textContent.trim() === value && value !== '');
         });
-
         drop.classList.remove('open');
         btn.classList.remove('open');
 
-        // Logiques liées
-        if (name === 'Contenu') setVideMode(value === 'Vide');
+        if (name === 'Contenu') onContenuChange(value);
     }
 
-    function setDropdownValue(name, value) {
-        selectOption(name, value);
-    }
+    function setDropdownValue(name, value) { selectOption(name, value); }
 
     function setDropdownDisabled(name, disabled, displayValue) {
         const btn = document.getElementById('btn'+name);
@@ -546,18 +525,73 @@
         }
     }
 
-    // Fermer dropdowns si clic ailleurs
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.custom-select-wrap')) closeAllDropdowns(null);
     });
 
-    /* ── Logique champ ID ────────────────────────────────── */
+    /* ── Logique Contenu ── */
+    function onContenuChange(value) {
+        const isVide    = value === 'Vide';
+        const isInconnu = value === 'Inconnu';
+        const isNonFonc = document.querySelector('input[name="mFonctionnel"]:checked')?.value === 'non';
+        if (isNonFonc) return;
+
+        // Zones : bloqué uniquement si Vide (Inconnu : pas de zones → aussi bloqué)
+        if (isVide || isInconnu) {
+            setDropdownDisabled('Zones', true, '—');
+        } else {
+            setDropdownDisabled('Zones', false);
+        }
+
+        // Quantité : bloqué si Vide, libre si Inconnu, obligatoire sinon
+        const qteInp = document.getElementById('mQte');
+        const qteReq = document.getElementById('qteRequired');
+        if (isVide) {
+            qteInp.value = '0'; qteInp.disabled = true;
+            qteReq.style.display = 'none';
+        } else {
+            qteInp.disabled = false;
+            qteReq.style.display = isInconnu ? 'none' : 'inline';
+            if (qteInp.value === '0') qteInp.value = '';
+        }
+    }
+
+    /* ── Logique Non fonctionnel ── */
+    function setNonFoncMode(isNon) {
+        const qteInp = document.getElementById('mQte');
+        if (isNon) {
+            document.getElementById('mContenu').dataset.prev = document.getElementById('mContenu').value;
+            document.getElementById('mZones').dataset.prev   = document.getElementById('mZones').value;
+            qteInp.dataset.prev = qteInp.value;
+            setDropdownDisabled('Contenu', true, '—');
+            setDropdownDisabled('Zones',   true, '—');
+            qteInp.value = '—'; qteInp.disabled = true;
+            document.getElementById('qteRequired').style.display = 'none';
+        } else {
+            setDropdownDisabled('Contenu', false);
+            setDropdownDisabled('Zones',   false);
+            qteInp.disabled = false;
+            const prevC = document.getElementById('mContenu').dataset.prev || '';
+            const prevZ = document.getElementById('mZones').dataset.prev   || '';
+            if (document.getElementById('mContenu').value === '—') setDropdownValue('Contenu', prevC);
+            if (document.getElementById('mZones').value   === '—') setDropdownValue('Zones',   prevZ);
+            if (qteInp.value === '—') qteInp.value = qteInp.dataset.prev || '';
+            onContenuChange(document.getElementById('mContenu').value);
+        }
+    }
+
+    document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.addEventListener('change', function() {
+        setNonFoncMode(this.value === 'non');
+    }));
+
+    /* ── Champ ID ── */
     function onIdInput(el) {
         el.value = el.value.replace(/[^0-9]/g, '').slice(0, VAR_LEN);
         const n = el.value.length;
         document.getElementById('idCounter').textContent = `(${n}/${VAR_LEN} chiffres)`;
         const err = n > 0 && n < VAR_LEN;
         document.getElementById('idError').style.display = err ? 'block' : 'none';
+        document.getElementById('idError').textContent = err ? '12 chiffres requis (chiffres uniquement)' : '';
         document.getElementById('idWrapper').style.borderColor = err ? 'var(--tcl-red)' : '#ccd3e0';
         const full = PREFIX + el.value;
         document.getElementById('mId').value = full;
@@ -566,63 +600,7 @@
         document.getElementById('mSuffixeDisplay').textContent = s || '—';
     }
 
-    /* ── Logique "Vide" ─────────────────────────────────────
-       Quand Contenu = "Vide", Zones passe sur un tiret (—) et
-       est désactivé, et la quantité est forcée à 0.            */
-    function setVideMode(isVide) {
-        const isNonFonc = document.querySelector('input[name="mFonctionnel"]:checked')?.value === 'non';
-        if (isNonFonc) return; // Non fonctionnel a priorité, ne touche pas aux champs
-
-        if (isVide) {
-            setDropdownDisabled('Zones', true, '—');
-            document.getElementById('mQte').value = '0';
-            document.getElementById('mQte').disabled = true;
-        } else {
-            setDropdownDisabled('Zones', false);
-            setDropdownValue('Zones', '');
-            document.getElementById('mQte').disabled = false;
-            if (document.getElementById('mQte').value === '0') document.getElementById('mQte').value = '';
-        }
-    }
-
-    /* ── Logique "Non fonctionnel" ───────────────────────────
-       En passant en "Non fonctionnel", Contenu/Zones/Qté sont
-       désactivés et passent sur un tiret. En revenant sur
-       "Fonctionnel", on restaure les valeurs précédentes —
-       rien n'est effacé qui n'était pas déjà un tiret.        */
-    function setNonFoncMode(isNon) {
-        const contenuInp = document.getElementById('mContenu');
-        const zonesInp   = document.getElementById('mZones');
-        const qteInp     = document.getElementById('mQte');
-
-        if (isNon) {
-            contenuInp.dataset.prev = contenuInp.value;
-            zonesInp.dataset.prev   = zonesInp.value;
-            qteInp.dataset.prev     = qteInp.value;
-
-            setDropdownDisabled('Contenu', true, '—');
-            setDropdownDisabled('Zones',   true, '—');
-            qteInp.value = '—';
-            qteInp.disabled = true;
-        } else {
-            setDropdownDisabled('Contenu', false);
-            setDropdownDisabled('Zones', false);
-            qteInp.disabled = false;
-
-            if (contenuInp.value === '—') setDropdownValue('Contenu', contenuInp.dataset.prev || '');
-            if (zonesInp.value === '—')   setDropdownValue('Zones', zonesInp.dataset.prev || '');
-            if (qteInp.value === '—')     qteInp.value = qteInp.dataset.prev || '';
-
-            // Si le contenu restauré est "Vide", on ré-applique la désactivation des zones/quantité
-            if (contenuInp.value === 'Vide') setVideMode(true);
-        }
-    }
-
-    document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.addEventListener('change', function() {
-        setNonFoncMode(this.value === 'non');
-    }));
-
-    /* ── Modal ───────────────────────────────────────────── */
+    /* ── Modal ── */
     function resetModal() {
         document.getElementById('mIdSuffix').value = '';
         document.getElementById('mId').value = '';
@@ -631,17 +609,18 @@
         document.getElementById('mSuffixeDisplay').textContent = '—';
         document.getElementById('idError').style.display = 'none';
         document.getElementById('idWrapper').style.borderColor = '#ccd3e0';
-        document.getElementById('mQte').value = '';
-        document.getElementById('mQte').disabled = false;
+        const qteInp = document.getElementById('mQte');
+        qteInp.value = ''; qteInp.disabled = false;
+        document.getElementById('qteError').style.display = 'none';
+        document.getElementById('qteRequired').style.display = 'none';
         document.getElementById('mEmp').value = '';
         document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
         setDropdownDisabled('Contenu', false); setDropdownValue('Contenu', '');
         setDropdownDisabled('Zones',   false); setDropdownValue('Zones',   '');
         setDropdownValue('Format', '');
-        // Nettoie les valeurs mémorisées par le mode "Non fonctionnel" du ticket précédent
         delete document.getElementById('mContenu').dataset.prev;
         delete document.getElementById('mZones').dataset.prev;
-        delete document.getElementById('mQte').dataset.prev;
+        delete qteInp.dataset.prev;
         closeAllDropdowns(null);
     }
 
@@ -651,8 +630,6 @@
         document.getElementById('modalTitle').innerHTML = index === -1
             ? '<i class="ti ti-ticket"></i> Nouveau ticket'
             : '<i class="ti ti-edit"></i> Modifier le ticket';
-
-        // À chaque ouverture (en particulier pour un nouveau ticket), on repart d'un formulaire vierge
         resetModal();
 
         if (index !== -1) {
@@ -671,14 +648,13 @@
                 const r = document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`);
                 if (r) r.checked = true;
             }
-
             if (isNon) {
                 setNonFoncMode(true);
             } else {
                 setDropdownValue('Contenu', t.contenu || '');
                 setDropdownValue('Zones',   t.zones   || '');
                 document.getElementById('mQte').value = t.quantite || '';
-                setVideMode(t.contenu === 'Vide');
+                onContenuChange(t.contenu || '');
             }
         }
         document.getElementById('myModal').classList.add('open');
@@ -689,31 +665,65 @@
         closeAllDropdowns(null);
     }
 
-    /* ── Sauvegarde / Suppression ────────────────────────── */
+    /* ── Sauvegarde ── */
     function sauvegarder() {
+        let hasError = false;
+
+        // Validation ID
         const varPart = document.getElementById('mIdSuffix').value;
         if (varPart.length !== VAR_LEN) {
+            document.getElementById('idError').textContent = '12 chiffres requis (chiffres uniquement)';
             document.getElementById('idError').style.display = 'block';
             document.getElementById('idWrapper').style.borderColor = 'var(--tcl-red)';
-            return;
+            hasError = true;
         }
-        const index       = parseInt(document.getElementById('editIndex').value);
-        const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
-        const empRaw      = document.getElementById('mEmp').value.trim();
-        const isNon       = fonctionnel === 'non';
 
+        const editIndex = parseInt(document.getElementById('editIndex').value);
+        const fullId    = document.getElementById('mId').value;
+
+        // Détection doublon
+        const doublon = tickets.findIndex((t, i) => t.id === fullId && i !== editIndex);
+        if (doublon !== -1) {
+            document.getElementById('idError').textContent = 'Ce numéro existe déjà (ticket #' + (doublon+1) + ')';
+            document.getElementById('idError').style.display = 'block';
+            document.getElementById('idWrapper').style.borderColor = 'var(--tcl-red)';
+            hasError = true;
+        }
+
+        const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
+        const isNon       = fonctionnel === 'non';
+        const contenu     = document.getElementById('mContenu').value;
+        const isVide      = contenu === 'Vide';
+        const isInconnu   = contenu === 'Inconnu';
+
+        // Validation quantité (obligatoire sauf Vide, Inconnu, Non fonctionnel)
+        if (!isNon && !isVide && !isInconnu) {
+            const qte = document.getElementById('mQte').value.trim();
+            if (!qte || isNaN(qte) || parseInt(qte) < 1) {
+                document.getElementById('qteError').style.display = 'block';
+                document.getElementById('mQte').classList.add('field-error');
+                hasError = true;
+            } else {
+                document.getElementById('qteError').style.display = 'none';
+                document.getElementById('mQte').classList.remove('field-error');
+            }
+        }
+
+        if (hasError) return;
+
+        const empRaw = document.getElementById('mEmp').value.trim();
         const ticket = {
-            id:          document.getElementById('mId').value,
+            id:          fullId,
             suffixe:     document.getElementById('mSuffixe').value,
             format:      document.getElementById('mFormat').value,
-            contenu:     isNon ? '—' : document.getElementById('mContenu').value,
+            contenu:     isNon ? '—' : contenu,
             zones:       isNon ? '—' : document.getElementById('mZones').value,
             quantite:    isNon ? '—' : document.getElementById('mQte').value,
             emprunteur:  empRaw === '' ? '—' : empRaw,
             fonctionnel: fonctionnel
         };
 
-        if (index === -1) tickets.push(ticket); else tickets[index] = ticket;
+        if (editIndex === -1) tickets.push(ticket); else tickets[editIndex] = ticket;
         sauvegarderAPI();
         fermerModal();
         render();
@@ -727,39 +737,27 @@
         render();
     }
 
-    /* ── Tri des colonnes ─────────────────────────────────── */
+    /* ── Tri ── */
     function sortBy(column) {
-        if (sortColumn === column) {
-            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            sortColumn = column;
-            sortDirection = 'asc';
-        }
+        if (sortColumn === column) sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        else { sortColumn = column; sortDirection = 'asc'; }
         render();
     }
 
     function getTicketsTries() {
         const indexed = tickets.map((t, i) => ({ t, i }));
         if (!sortColumn) return indexed;
-
         indexed.sort((a, b) => {
-            let va = a.t[sortColumn];
-            let vb = b.t[sortColumn];
-
-            // Tri numérique pour la quantité (les tirets/valeurs vides passent en dernier)
+            let va = a.t[sortColumn], vb = b.t[sortColumn];
             if (sortColumn === 'quantite') {
                 const na = (va === '—' || va === '' || va == null || isNaN(va)) ? -Infinity : parseFloat(va);
                 const nb = (vb === '—' || vb === '' || vb == null || isNaN(vb)) ? -Infinity : parseFloat(vb);
                 return sortDirection === 'asc' ? na - nb : nb - na;
             }
-
-            va = (va ?? '').toString();
-            vb = (vb ?? '').toString();
-            // "numeric: true" permet un tri correct des ID/suffixes (numériques sous forme de texte)
+            va = (va ?? '').toString(); vb = (vb ?? '').toString();
             const cmp = va.localeCompare(vb, 'fr', { numeric: true, sensitivity: 'base' });
             return sortDirection === 'asc' ? cmp : -cmp;
         });
-
         return indexed;
     }
 
@@ -777,10 +775,10 @@
         });
     }
 
-    /* ── Render ──────────────────────────────────────────── */
+    /* ── Render ── */
     function initials(name) {
         if (!name || name === '—') return '—';
-        return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+        return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0,2).join('');
     }
 
     function fonctionnelBadge(val) {
@@ -795,30 +793,30 @@
         const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
         const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
         const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
-        const economies = (nbOk * PRIX_TICKET).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
 
         document.getElementById('statsBar').innerHTML = `
             <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
             <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
             <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#2e7d32">${nbOk}</div></div>
             <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#b50015">${nbKo}</div></div>
-            <div class="stat-card"><div class="label">Économies réalisées</div><div class="value" style="color:#2e7d32">${economies}</div></div>
         `;
 
         majIconesTri();
-
         if (tickets.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
         empty.style.display = 'none';
 
-        const lignes = getTicketsTries();
-
-        tbody.innerHTML = lignes.map(({t, i}) => `
+        tbody.innerHTML = getTicketsTries().map(({t, i}) => `
             <tr>
                 <td style="font-family:monospace;font-weight:600;color:var(--tcl-red)">${t.id || '—'}</td>
                 <td style="font-family:monospace;color:#6b7a99">${t.suffixe || '—'}</td>
-                <td><span class="badge-format">${t.format || '—'}</span></td>
+                <td><span class="badge-format ${formatClass(t.format)}">${t.format || '—'}</span></td>
                 <td style="color:#2d3748">${t.contenu || '—'}</td>
-                <td>${t.zones && t.zones !== '—' ? `<span class="badge-zones">${t.zones}</span>` : '<span style="color:#bbb">—</span>'}</td>
+                <td>
+                    <div class="zones-cell">
+                        ${zonesDots(t.zones)}
+                        <span class="zone-label">${t.zones && t.zones !== '—' ? t.zones : '<span style="color:#bbb">—</span>'}</span>
+                    </div>
+                </td>
                 <td style="font-weight:600;text-align:center">${t.quantite || '—'}</td>
                 <td>
                     <div class="emprunteur-cell">
