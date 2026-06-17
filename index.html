@@ -202,9 +202,20 @@
             border-color: rgba(255,255,255,0.08);
             vertical-align: middle;
             color: white;
+            transition: background 0.15s;
+            cursor: pointer;
         }
         .table-card tbody tr:hover td {
             background: rgba(255,255,255,0.07);
+        }
+        .table-card tbody tr.selected td {
+            background: rgba(226,0,26,0.15);
+        }
+        .table-card tbody tr.selected td:first-child {
+            box-shadow: inset 3px 0 0 rgba(226,0,26,0.8);
+        }
+        .table-card tbody tr.selected:hover td {
+            background: rgba(226,0,26,0.22);
         }
 
         /* ── Badges Format ── */
@@ -1176,7 +1187,7 @@
         empty.style.display = 'none';
 
         tbody.innerHTML = rows.map(({t, i}) => `
-            <tr>
+            <tr onclick="toggleSelectRow(this)" data-index="${i}">
                 <td class="id-style" style="color:#ff8a8a">${t.id || '—'}</td>
                 <td class="suffixe-style" style="color:rgba(255,255,255,0.55)">${t.suffixe || '—'}</td>
                 <td><span class="badge-format ${formatClass(t.format)}">${t.format || '—'}</span></td>
@@ -1199,6 +1210,13 @@
                 <td><button class="btn-edit" onclick="ouvrirModal(${i})"><i class="ti ti-edit"></i><span class="text-collapse"> Éditer</span></button></td>
             </tr>
         `).join('');
+    }
+
+    function toggleSelectRow(tr) {
+        if (event.target.closest('.btn-edit')) return;
+        const wasSelected = tr.classList.contains('selected');
+        document.querySelectorAll('#ticketBody tr.selected').forEach(r => r.classList.remove('selected'));
+        if (!wasSelected) tr.classList.add('selected');
     }
 
     document.getElementById('myModal').addEventListener('click', function(e) {
