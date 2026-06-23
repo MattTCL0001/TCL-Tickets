@@ -1,609 +1,371 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestion TCL</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-    <style>
-        @font-face {
-            font-family: "Google Sans Flex";
-            src: url("./fonts/Google Sans Flex.ttf") format("truetype");
-            font-weight: 100 1000;
-            font-stretch: 25% 151%;
-            font-style: normal;
-            font-display: swap;
-        }
+<meta charset="UTF-8">
+<title>Gestion TCL</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+@font-face {
+    font-family: "Google Sans Flex";
+    src: url("./fonts/Google Sans Flex.ttf") format("truetype");
+    font-weight: 100 1000;
+    font-stretch: 25% 151%;
+    font-style: normal;
+    font-display: swap;
+}
 
-        :root {
-            --tcl-red: #E2001A;
-            --tcl-red-dark: #b50015;
-            --tcl-red-light: rgba(226,0,26,0.12);
-            --glass-bg: rgba(255,255,255,0.18);
-            --glass-bg-strong: rgba(255,255,255,0.28);
-            --glass-border: rgba(255,255,255,0.45);
-            --glass-border-subtle: rgba(255,255,255,0.22);
-            --glass-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 0 rgba(255,255,255,0.55) inset;
-            --glass-blur: blur(22px) saturate(160%);
-            --text-primary: #fff;
-            --text-secondary: rgba(255,255,255,0.75);
-            --text-muted: rgba(255,255,255,0.5);
-        }
+:root {
+    --red: #E2001A;
+    --red-dark: rgba(226,0,26,0.25);
+    --red-glow: rgba(226,0,26,0.15);
+    --glass: rgba(255,255,255,0.12);
+    --glass-hi: rgba(255,255,255,0.2);
+    --border: rgba(255,255,255,0.22);
+    --border-hi: rgba(255,255,255,0.45);
+    --shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 0 rgba(255,255,255,0.55) inset;
+    --blur: blur(22px) saturate(160%);
+    --t1: #fff;
+    --t2: rgba(255,255,255,0.75);
+    --t3: rgba(255,255,255,0.5);
+    --t4: rgba(255,255,255,0.25);
+    --radius: 10px;
+    --gsf: "Google Sans Flex", sans-serif;
+}
 
-        *, *::before, *::after { box-sizing: border-box; }
+*,*::before,*::after{box-sizing:border-box}
+html,body{min-height:100%;margin:0;padding:0}
 
-        html, body {
-            min-height: 100%;
-            margin: 0; padding: 0;
-        }
+body {
+    background: #1a1a2e url('./bg.png') center/cover no-repeat fixed;
+    color: var(--t1);
+    font-family: var(--gsf);
+}
+body::before {
+    content:"";position:fixed;inset:0;
+    background:rgba(0,0,0,0.28);z-index:0;pointer-events:none;
+}
 
-        body {
-            background: #1a1a2e url('./bg.png') center center / cover no-repeat fixed;
-            color: var(--text-primary);
-            font-family: "Google Sans Flex", sans-serif;
-            font-optical-sizing: auto;
-        }
+/* Header */
+.page-header {
+    position:sticky;top:0;z-index:100;height:68px;
+    display:flex;align-items:center;gap:1rem;padding:0 1.5rem 0 0;
+    background:rgba(15,10,30,0.45);
+    backdrop-filter:var(--blur);
+    border-bottom:0.5px solid rgba(255,255,255,0.15);
+    box-shadow:0 2px 24px rgba(0,0,0,0.22);
+}
+.header-svg-wrap{height:100%;flex-shrink:0;display:flex;align-items:stretch}
+.header-svg-wrap svg{height:100%;width:auto;display:block}
+.page-header h1{font-size:1.05rem;font-weight:380;margin:0;letter-spacing:.01em;
+    font-variation-settings:"slnt" 0,"wdth" 112.5,"GRAD" 0,"ROND" 0}
 
-        /* ── Overlay très léger pour assombrir légèrement le fond ── */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.28);
-            z-index: 0;
-            pointer-events: none;
-        }
+/* Sync */
+.sync-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
+    display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .3s;backdrop-filter:blur(8px)}
+.sync-status.idle{background:var(--glass);color:var(--t2)}
+.sync-status.saving{background:var(--glass-hi);color:var(--t1)}
+.sync-status.ok{background:rgba(46,125,50,0.35);color:#a5d6a7;border:0.5px solid rgba(165,214,167,0.3)}
+.sync-status.error{background:rgba(181,0,21,0.35);color:#ef9a9a;border:0.5px solid rgba(239,154,154,0.3)}
 
-        /* ── Header ── */
-        .page-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            height: 68px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0 1.5rem 0 0;
-            background: rgba(15,10,30,0.45);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 0.5px solid var(--glass-border-subtle);
-            box-shadow: 0 2px 24px rgba(0,0,0,0.22);
-        }
+/* Shared glass card */
+.glass{
+    background:var(--glass);
+    backdrop-filter:var(--blur);
+    border:0.5px solid var(--border-hi);
+    box-shadow:var(--shadow);
+    border-radius:14px;
+}
 
-        .header-svg-wrap {
-            height: 100%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: stretch;
-        }
-        .header-svg-wrap svg { height: 100%; width: auto; display: block; }
+/* Btn add */
+.btn-add{
+    margin-left:auto;
+    background:rgba(226,0,26,0.75);
+    color:#fff;border:0.5px solid rgba(255,255,255,0.3);
+    font-weight:700;padding:.45rem 1.1rem;border-radius:var(--radius);
+    cursor:pointer;display:flex;align-items:center;gap:6px;
+    font-size:.875rem;transition:background .15s;white-space:nowrap;
+    box-shadow:0 2px 12px rgba(226,0,26,0.3),0 1px 0 rgba(255,255,255,0.25) inset;
+}
+.btn-add:hover{background:rgba(226,0,26,0.9)}
 
-        .page-header h1 {
-            font-size: 1.05rem;
-            font-weight: 500;
-            margin: 0;
-            color: var(--text-primary);
-            letter-spacing: 0.01em;
-        }
+/* Layout */
+.content-area{position:relative;z-index:1;padding:1.5rem 1.5rem 2rem}
 
-        .header-title {
-            font-family: "Google Sans Flex", sans-serif;
-            font-optical-sizing: auto;
-            font-weight: 380;
-            font-variation-settings: "slnt" 0,"wdth" 112.5,"GRAD" 0,"ROND" 0;
-        }
+/* Stats */
+.stats-bar{display:flex;gap:.85rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.stat-card{padding:.85rem 1.25rem;min-width:130px}
+.stat-card .label{font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;
+    font-variation-settings:"wght" 400,"wdth" 87.5,"GRAD" 100,"ROND" 66,"slnt" 0}
+.stat-card .value{font-size:1.5rem;color:#fff;
+    font-variation-settings:"wght" 692,"wdth" 125,"GRAD" 0,"ROND" 0,"slnt" -8}
 
-        /* ── Sync pill ── */
-        .sync-status {
-            font-size: 11px; font-weight: 600;
-            padding: 4px 10px; border-radius: 20px;
-            display: flex; align-items: center; gap: 5px;
-            white-space: nowrap; transition: all 0.3s;
-            backdrop-filter: blur(8px);
-        }
-        .sync-status.idle   { background: rgba(255,255,255,0.12); color: var(--text-secondary); }
-        .sync-status.saving { background: rgba(255,255,255,0.2); color: white; }
-        .sync-status.ok     { background: rgba(46,125,50,0.35); color: #a5d6a7; border: 0.5px solid rgba(165,214,167,0.3); }
-        .sync-status.error  { background: rgba(181,0,21,0.35); color: #ef9a9a; border: 0.5px solid rgba(239,154,154,0.3); }
+/* Table */
+.table-card{background:var(--glass);backdrop-filter:var(--blur);
+    border:0.5px solid var(--border-hi);box-shadow:var(--shadow);
+    border-radius:16px;overflow:hidden}
+.table-card table{margin:0;font-size:.875rem}
+.table-card thead th{
+    background:rgba(255,255,255,0.08);color:var(--t2);
+    font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+    padding:.85rem 1rem;border-bottom:0.5px solid rgba(255,255,255,0.15);
+    border-top:none;cursor:pointer;user-select:none;transition:color .15s;white-space:nowrap;
+}
+.table-card thead th:hover{color:#fff}
+.table-card thead th.no-sort,.table-card thead th.no-sort:hover{cursor:default;color:var(--t2)}
+.table-card thead th.sorted-col{color:#ff6b7a}
+.sort-icon{margin-left:4px;font-size:13px;opacity:.35;vertical-align:middle}
+.sort-icon.active{opacity:1}
+.table-card tbody td{
+    padding:.75rem 1rem;border-color:rgba(255,255,255,0.08);
+    vertical-align:middle;color:#fff;transition:background .15s;cursor:pointer;
+}
+.table-card tbody tr:hover td{background:rgba(255,255,255,0.07)}
+.table-card tbody tr.selected td{background:rgba(226,0,26,0.15)}
+.table-card tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 rgba(226,0,26,0.8)}
+.table-card tbody tr.selected:hover td{background:rgba(226,0,26,0.22)}
 
-        /* ── Add button ── */
-        .btn-add {
-            margin-left: auto;
-            background: rgba(226,0,26,0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            color: white;
-            border: 0.5px solid rgba(255,255,255,0.3);
-            font-weight: 700;
-            padding: 0.45rem 1.1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.875rem;
-            transition: background 0.15s, opacity 0.15s;
-            white-space: nowrap;
-            box-shadow: 0 2px 12px rgba(226,0,26,0.3), 0 1px 0 rgba(255,255,255,0.25) inset;
-        }
-        .btn-add:hover { background: rgba(226,0,26,0.9); }
+/* Badges */
+.badge-format{display:inline-block;padding:3px 10px;border-radius:20px;
+    font-size:11px;font-weight:600;letter-spacing:.02em;backdrop-filter:blur(8px)}
+.badge-format.rouge{background:rgba(226,0,26,0.25);color:#ff8a8a;border:0.5px solid rgba(226,0,26,0.4)}
+.badge-format.bleu{background:rgba(26,86,196,0.25);color:#90b8f8;border:0.5px solid rgba(26,86,196,0.4)}
+.badge-format.rose{background:rgba(181,0,107,0.25);color:#f48fb1;border:0.5px solid rgba(181,0,107,0.4)}
+.badge-format.orange{background:rgba(181,90,0,0.25);color:#ffcc80;border:0.5px solid rgba(181,90,0,0.4)}
+.badge-format.grey{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);border:0.5px solid rgba(255,255,255,0.2)}
 
-        /* ── Layout ── */
-        .content-area {
-            position: relative;
-            z-index: 1;
-            padding: 1.5rem 1.5rem 2rem;
-        }
+/* Zones */
+.zones-cell{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.zone-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;
+    display:inline-block;border:1px solid rgba(255,255,255,0.3)}
+.zone-label{font-size:12px;color:var(--t2)}
 
-        /* ── Stats bar ── */
-        .stats-bar { display: flex; gap: 0.85rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+/* État badge */
+.badge-etat{display:inline-flex;align-items:center;gap:4px;
+    padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;backdrop-filter:blur(8px)}
+.badge-etat.ok{background:rgba(46,125,50,0.3);color:#a5d6a7;border:0.5px solid rgba(165,214,167,0.3)}
+.badge-etat.ko{background:rgba(181,0,21,0.3);color:#ef9a9a;border:0.5px solid rgba(239,154,154,0.3)}
 
-        .stat-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-radius: 14px;
-            border: 0.5px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            padding: 0.85rem 1.25rem;
-            min-width: 130px;
-        }
-        .stat-card .label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            font-variation-settings: "wght" 400,"wdth" 87.5,"GRAD" 100,"ROND" 66,"slnt" 0;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-        .stat-card .value {
-            font-size: 1.5rem;
-            color: white;
-            font-variation-settings: "wght" 692,"wdth" 125,"GRAD" 0,"ROND" 0,"slnt" -8;
-        }
+/* Edit button */
+.btn-edit{
+    background:rgba(255,255,255,0.1);border:0.5px solid var(--border);
+    color:rgba(255,255,255,0.8);border-radius:8px;padding:5px 12px;
+    font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;
+}
+.btn-edit:hover{background:var(--red-dark);border-color:rgba(226,0,26,0.5);color:#ff8a8a}
 
-        /* ── Table card ── */
-        .table-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-radius: 16px;
-            border: 0.5px solid var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            overflow: hidden;
-        }
+/* Empty */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--t3)}
+.empty-state i{font-size:3rem;display:block;margin-bottom:1rem}
 
-        .table-card table { margin: 0; font-size: 0.875rem; }
+/* Search */
+.search-wrap{
+    display:flex;align-items:center;background:var(--glass);
+    border:0.5px solid rgba(255,255,255,0.3);border-radius:var(--radius);
+    overflow:hidden;width:220px;backdrop-filter:blur(12px);
+}
+.search-wrap:focus-within{background:var(--glass-hi);border-color:rgba(255,255,255,0.5)}
+.search-icon-btn{
+    background:none;border:none;color:#fff;padding:0 10px;cursor:pointer;
+    display:flex;align-items:center;font-size:1rem;opacity:.8;flex-shrink:0;height:34px;
+}
+.search-input{background:none;border:none;outline:none;color:#fff;font-size:.85rem;width:100%;padding:0 8px 0 0}
+.search-input::placeholder{color:var(--t3)}
+.search-input::-webkit-search-cancel-button{display:none}
 
-        .table-card thead th {
-            background: rgba(255,255,255,0.08);
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 0.85rem 1rem;
-            border-bottom: 0.5px solid var(--glass-border-subtle);
-            border-top: none;
-            cursor: pointer;
-            user-select: none;
-            transition: color 0.15s;
-            white-space: nowrap;
-        }
-        .table-card thead th:hover { color: white; }
-        .table-card thead th.no-sort,
-        .table-card thead th.no-sort:hover { cursor: default; color: var(--text-secondary); }
-        .table-card thead th.sorted-col { color: #ff6b7a; }
-        .sort-icon { margin-left: 4px; font-size: 13px; opacity: 0.35; vertical-align: middle; }
-        .sort-icon.active { opacity: 1; }
+/* Modal */
+#myModal{
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);
+    z-index:1050;align-items:center;justify-content:center;
+}
+#myModal.open{display:flex}
+.modal-box{
+    background:rgba(20,15,40,0.65);
+    backdrop-filter:blur(40px) saturate(180%);
+    border:0.5px solid rgba(255,255,255,0.3);
+    box-shadow:0 24px 64px rgba(0,0,0,0.5),0 1px 0 rgba(255,255,255,0.4) inset;
+    border-radius:20px;padding:1.75rem;width:100%;
+    max-width:520px;max-height:92vh;overflow-y:auto;color:#fff;
+}
+.modal-header-custom{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.modal-header-custom h5{font-size:1.05rem;font-weight:600;margin:0;color:#ff8a8a;display:flex;align-items:center;gap:7px}
+.modal-close{
+    background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.2);
+    color:rgba(255,255,255,0.7);cursor:pointer;font-size:1rem;border-radius:8px;
+    width:30px;height:30px;display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.modal-close:hover{background:rgba(255,255,255,0.18);color:#fff}
 
-        .table-card tbody td {
-            padding: 0.75rem 1rem;
-            border-color: rgba(255,255,255,0.08);
-            vertical-align: middle;
-            color: white;
-            transition: background 0.15s;
-            cursor: pointer;
-        }
-        .table-card tbody tr:hover td {
-            background: rgba(255,255,255,0.07);
-        }
-        .table-card tbody tr.selected td {
-            background: rgba(226,0,26,0.15);
-        }
-        .table-card tbody tr.selected td:first-child {
-            box-shadow: inset 3px 0 0 rgba(226,0,26,0.8);
-        }
-        .table-card tbody tr.selected:hover td {
-            background: rgba(226,0,26,0.22);
-        }
+/* Form elements */
+.form-label-sm{font-size:11px;font-weight:600;color:var(--t2);
+    text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;display:block}
+.form-group{margin-bottom:1rem}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.5rem;padding-top:1rem;border-top:0.5px solid rgba(255,255,255,0.12)}
 
-        /* ── Badges Format ── */
-        .badge-format {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            backdrop-filter: blur(8px);
-        }
-        .badge-format.rouge  { background: rgba(226,0,26,0.25); color: #ff8a8a; border: 0.5px solid rgba(226,0,26,0.4); }
-        .badge-format.bleu   { background: rgba(26,86,196,0.25); color: #90b8f8; border: 0.5px solid rgba(26,86,196,0.4); }
-        .badge-format.rose   { background: rgba(181,0,107,0.25); color: #f48fb1; border: 0.5px solid rgba(181,0,107,0.4); }
-        .badge-format.orange { background: rgba(181,90,0,0.25); color: #ffcc80; border: 0.5px solid rgba(181,90,0,0.4); }
-        .badge-format.grey   { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); border: 0.5px solid rgba(255,255,255,0.2); }
+/* Shared input/btn base */
+input.form-control,
+.custom-select-btn {
+    background:rgba(255,255,255,0.1);
+    border:0.5px solid var(--border);
+    border-radius:var(--radius);
+    font-size:.875rem;
+    color:#fff;
+    transition:border-color .15s,background .15s;
+}
+input.form-control{padding:.55rem .85rem}
+input.form-control::placeholder{color:var(--t4)}
+input.form-control:focus,
+.custom-select-btn:focus{
+    background:rgba(255,255,255,0.15);
+    border-color:rgba(226,0,26,0.6);
+    box-shadow:0 0 0 3px var(--red-glow);
+    outline:none;
+}
+input.form-control:disabled{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.3);cursor:not-allowed}
+input.form-control.field-error,.custom-select-btn.field-error{border-color:rgba(226,0,26,0.7)}
 
-        /* ── Zones ── */
-        .zones-cell { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-        .zone-dot {
-            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-            display: inline-block; border: 1px solid rgba(255,255,255,0.3);
-        }
-        .zone-label { font-size: 12px; color: var(--text-secondary); }
+/* ID wrapper */
+#idWrapper{
+    display:flex;align-items:center;
+    border:0.5px solid var(--border);border-radius:var(--radius);
+    overflow:hidden;background:rgba(255,255,255,0.08);
+}
+#idWrapper:focus-within{border-color:rgba(226,0,26,0.6);box-shadow:0 0 0 3px var(--red-glow)}
+#idPrefixSpan{
+    padding:.55rem .7rem .55rem .85rem;font-family:var(--gsf);font-size:.875rem;
+    color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.06);
+    border-right:0.5px solid rgba(255,255,255,0.12);white-space:nowrap;user-select:none;
+    font-variation-settings:'slnt' 0,'wdth' 75,'GRAD' 0,'ROND' 100;
+}
+#mIdSuffix{
+    border:none;outline:none;flex:1;padding:.55rem .85rem;
+    font-family:var(--gsf);font-size:.875rem;color:#fff;background:transparent;width:100%;
+    font-variation-settings:'slnt' 0,'wdth' 75,'GRAD' 0,'ROND' 100;
+}
 
-        /* ── Badge fonctionnel ── */
-        .badge-etat {
-            display: inline-flex; align-items: center; gap: 4px;
-            padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
-            backdrop-filter: blur(8px);
-        }
-        .badge-etat.ok { background: rgba(46,125,50,0.3); color: #a5d6a7; border: 0.5px solid rgba(165,214,167,0.3); }
-        .badge-etat.ko { background: rgba(181,0,21,0.3); color: #ef9a9a; border: 0.5px solid rgba(239,154,154,0.3); }
+/* Buttons */
+.btn-save{
+    background:rgba(226,0,26,0.7);color:#fff;
+    border:0.5px solid rgba(255,100,100,0.4);border-radius:var(--radius);
+    padding:.6rem 1.25rem;font-weight:700;font-size:.875rem;cursor:pointer;
+    display:flex;align-items:center;gap:6px;flex:1;justify-content:center;transition:background .15s;
+    box-shadow:0 2px 12px rgba(226,0,26,0.25),0 1px 0 rgba(255,255,255,0.2) inset;
+}
+.btn-save:hover{background:rgba(226,0,26,0.9)}
+.btn-delete{
+    background:rgba(255,255,255,0.08);color:#ef9a9a;
+    border:0.5px solid rgba(239,154,154,0.3);border-radius:var(--radius);
+    padding:.6rem 1.25rem;font-weight:600;font-size:.875rem;cursor:pointer;
+    display:flex;align-items:center;gap:6px;transition:background .15s;
+}
+.btn-delete:hover{background:rgba(181,0,21,0.25)}
+.btn-cancel{
+    background:rgba(255,255,255,0.08);color:var(--t2);
+    border:0.5px solid rgba(255,255,255,0.15);border-radius:var(--radius);
+    padding:.6rem 1rem;font-weight:500;font-size:.875rem;cursor:pointer;transition:background .15s;
+}
+.btn-cancel:hover{background:rgba(255,255,255,0.14);color:#fff}
 
-        /* ── Edit button ── */
-        .btn-edit {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(8px);
-            border: 0.5px solid rgba(255,255,255,0.25);
-            color: rgba(255,255,255,0.8);
-            border-radius: 8px;
-            padding: 5px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.15s;
-        }
-        .btn-edit:hover {
-            background: rgba(226,0,26,0.25);
-            border-color: rgba(226,0,26,0.5);
-            color: #ff8a8a;
-        }
+/* Custom select */
+.custom-select-wrap{position:relative}
+.custom-select-btn{
+    width:100%;padding:.55rem 2.2rem .55rem .85rem;cursor:pointer;
+    text-align:left;display:flex;align-items:center;justify-content:space-between;gap:6px;
+    user-select:none;min-height:36px;
+}
+.custom-select-btn.placeholder{color:var(--t4)}
+.custom-select-btn .chevron{font-size:14px;color:rgba(255,255,255,0.4);flex-shrink:0;transition:transform .2s}
+.custom-select-btn.open .chevron{transform:rotate(180deg)}
+.custom-select-btn.disabled-field{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.25);cursor:not-allowed;pointer-events:none}
+.custom-dropdown{
+    position:absolute;top:calc(100% + 6px);left:0;right:0;
+    background:rgba(20,15,40,0.75);
+    backdrop-filter:blur(30px) saturate(160%);
+    border:0.5px solid rgba(255,255,255,0.25);border-radius:12px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.4),0 1px 0 rgba(255,255,255,0.3) inset;
+    z-index:2000;max-height:220px;overflow-y:auto;display:none;padding:4px;
+}
+.custom-dropdown.open{display:block}
+.custom-dropdown-item{
+    padding:.5rem .85rem;font-size:.875rem;border-radius:8px;
+    cursor:pointer;color:rgba(255,255,255,0.85);transition:background .1s;
+    display:flex;align-items:center;gap:7px;
+}
+.custom-dropdown-item:hover{background:rgba(255,255,255,0.1)}
+.custom-dropdown-item.selected{background:rgba(226,0,26,0.2);color:#ff8a8a;font-weight:600}
+.custom-dropdown-item.placeholder-item{color:rgba(255,255,255,0.3);font-style:italic;pointer-events:none;opacity:.6}
 
-        /* ── Empty state ── */
-        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
-        .empty-state i { font-size: 3rem; display: block; margin-bottom: 1rem; }
+/* Suffix display */
+.suffix-display{
+    font-family:monospace;background:rgba(255,255,255,0.08);
+    border:0.5px solid rgba(255,255,255,0.15);border-radius:8px;
+    padding:.55rem .85rem;font-size:.95rem;color:#ff8a8a;font-weight:700;letter-spacing:.1em;
+}
 
-        /* ── Search ── */
-        .search-wrap {
-            display: flex;
-            align-items: center;
-            background: rgba(255,255,255,0.12);
-            border: 0.5px solid rgba(255,255,255,0.3);
-            border-radius: 10px;
-            overflow: hidden;
-            width: 220px;
-            backdrop-filter: blur(12px);
-        }
-        .search-wrap:focus-within {
-            background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.5);
-        }
-        .search-icon-btn {
-            background: none; border: none; color: white;
-            padding: 0 10px; cursor: pointer;
-            display: flex; align-items: center;
-            font-size: 1rem; opacity: 0.8; flex-shrink: 0; height: 34px;
-        }
-        .search-input {
-            background: none; border: none; outline: none;
-            color: white; font-size: 0.85rem; width: 100%; padding: 0 8px 0 0;
-        }
-        .search-input::placeholder { color: rgba(255,255,255,0.5); }
-        .search-input::-webkit-search-cancel-button { display: none; }
+/* Toggle */
+.toggle-group{display:flex;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:rgba(255,255,255,0.06)}
+.toggle-group input[type=radio]{display:none}
+.toggle-group label{
+    flex:1;text-align:center;padding:.5rem;font-size:.82rem;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;
+    transition:all .15s;color:var(--t4);background:transparent;border:none;margin:0;
+}
+.toggle-group label:not(:last-child){border-right:0.5px solid rgba(255,255,255,0.12)}
+#fOui:checked + label{background:rgba(46,125,50,0.35);color:#a5d6a7}
+#fNon:checked + label{background:rgba(181,0,21,0.35);color:#ef9a9a}
 
-        /* ── Modal ── */
-        #myModal {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            z-index: 1050;
-            align-items: center;
-            justify-content: center;
-        }
-        #myModal.open { display: flex; }
+.row-2col{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 
-        .modal-box {
-            background: rgba(20,15,40,0.65);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 0.5px solid rgba(255,255,255,0.3);
-            box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.4) inset;
-            border-radius: 20px;
-            padding: 1.75rem;
-            width: 100%;
-            max-width: 520px;
-            max-height: 92vh;
-            overflow-y: auto;
-            color: white;
-        }
+/* Emprunteur */
+.emprunteur-cell{display:flex;align-items:center;gap:7px}
+.emp-avatar{
+    width:26px;height:26px;border-radius:50%;
+    background:var(--red-dark);border:0.5px solid rgba(226,0,26,0.4);
+    color:#ff8a8a;font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.drop-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,0.2);display:inline-block}
 
-        .modal-header-custom {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.25rem;
-        }
-        .modal-header-custom h5 {
-            font-size: 1.05rem; font-weight: 600; margin: 0;
-            color: #ff8a8a;
-            display: flex; align-items: center; gap: 7px;
-        }
-        .modal-close {
-            background: rgba(255,255,255,0.1);
-            border: 0.5px solid rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.7);
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 8px;
-            width: 30px; height: 30px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.15s;
-        }
-        .modal-close:hover { background: rgba(255,255,255,0.18); color: white; }
+/* Type styles */
+.id-style{font-variation-settings:"wght" 72,"wdth" 50,"GRAD" 0,"ROND" 0,"slnt" 0}
+.suffixe-style{font-variation-settings:"wght" 230,"wdth" 76,"GRAD" 0,"ROND" 75,"slnt" -5}
+.contenu-style{font-weight:139;font-variation-settings:"slnt" 0,"wdth" 70,"GRAD" 0,"ROND" 0}
 
-        .form-label-sm {
-            font-size: 11px; font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase; letter-spacing: 0.06em;
-            margin-bottom: 4px; display: block;
-        }
-        .form-group { margin-bottom: 1rem; }
+/* Responsive */
+@media(max-width:860px){
+    .search-wrap{width:36px}
+    .search-wrap:focus-within{width:180px}
+    .search-input{width:0;padding:0;transition:width .3s,padding .3s}
+    .search-wrap:focus-within .search-input{width:140px;padding:0 8px 0 0}
+}
+@media(max-width:1100px){
+    .badge-etat .text-collapse,.btn-edit .text-collapse,.zone-label{display:none}
+    .badge-etat{padding:4px 6px}
+    .btn-edit{padding:5px 8px}
+}
 
-        .modal-actions {
-            display: flex; gap: 0.75rem;
-            margin-top: 1.5rem; padding-top: 1rem;
-            border-top: 0.5px solid rgba(255,255,255,0.12);
-        }
-
-        .btn-save {
-            background: rgba(226,0,26,0.7);
-            backdrop-filter: blur(8px);
-            color: white; border: 0.5px solid rgba(255,100,100,0.4);
-            border-radius: 10px; padding: 0.6rem 1.25rem;
-            font-weight: 700; font-size: 0.875rem; cursor: pointer;
-            display: flex; align-items: center; gap: 6px;
-            flex: 1; justify-content: center; transition: background 0.15s;
-            box-shadow: 0 2px 12px rgba(226,0,26,0.25), 0 1px 0 rgba(255,255,255,0.2) inset;
-        }
-        .btn-save:hover { background: rgba(226,0,26,0.9); }
-
-        .btn-delete {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(8px);
-            color: #ef9a9a;
-            border: 0.5px solid rgba(239,154,154,0.3);
-            border-radius: 10px; padding: 0.6rem 1.25rem;
-            font-weight: 600; font-size: 0.875rem; cursor: pointer;
-            display: flex; align-items: center; gap: 6px;
-            transition: background 0.15s;
-        }
-        .btn-delete:hover { background: rgba(181,0,21,0.25); }
-
-        .btn-cancel {
-            background: rgba(255,255,255,0.08);
-            color: var(--text-secondary);
-            border: 0.5px solid rgba(255,255,255,0.15);
-            border-radius: 10px; padding: 0.6rem 1rem;
-            font-weight: 500; font-size: 0.875rem; cursor: pointer;
-            transition: background 0.15s;
-        }
-        .btn-cancel:hover { background: rgba(255,255,255,0.14); color: white; }
-
-        /* ── Inputs dans modal ── */
-        input.form-control {
-            background: rgba(255,255,255,0.1);
-            border: 0.5px solid rgba(255,255,255,0.22);
-            border-radius: 10px;
-            font-size: 0.875rem;
-            padding: 0.55rem 0.85rem;
-            color: white;
-            transition: border-color 0.15s, background 0.15s;
-        }
-        input.form-control::placeholder { color: rgba(255,255,255,0.35); }
-        input.form-control:focus {
-            background: rgba(255,255,255,0.15);
-            border-color: rgba(226,0,26,0.6);
-            box-shadow: 0 0 0 3px rgba(226,0,26,0.15);
-            outline: none;
-            color: white;
-        }
-        input.form-control:disabled {
-            background: rgba(255,255,255,0.04);
-            color: rgba(255,255,255,0.3);
-            cursor: not-allowed;
-        }
-        input.form-control.field-error { border-color: rgba(226,0,26,0.7); }
-
-        /* ── ID wrapper ── */
-        #idWrapper {
-            display: flex;
-            align-items: center;
-            border: 0.5px solid rgba(255,255,255,0.22);
-            border-radius: 10px;
-            overflow: hidden;
-            background: rgba(255,255,255,0.08);
-        }
-        #idWrapper:focus-within {
-            border-color: rgba(226,0,26,0.6);
-            box-shadow: 0 0 0 3px rgba(226,0,26,0.15);
-        }
-
-        /* ── Custom dropdowns ── */
-        .custom-select-wrap { position: relative; }
-        .custom-select-btn {
-            width: 100%;
-            border: 0.5px solid rgba(255,255,255,0.22);
-            border-radius: 10px;
-            padding: 0.55rem 2.2rem 0.55rem 0.85rem;
-            font-size: 0.875rem;
-            color: white;
-            background: rgba(255,255,255,0.1);
-            cursor: pointer;
-            text-align: left;
-            display: flex; align-items: center; justify-content: space-between; gap: 6px;
-            transition: border-color 0.15s, background 0.15s;
-            user-select: none; min-height: 36px;
-        }
-        .custom-select-btn:focus {
-            outline: none;
-            border-color: rgba(226,0,26,0.6);
-            box-shadow: 0 0 0 3px rgba(226,0,26,0.15);
-        }
-        .custom-select-btn.placeholder { color: rgba(255,255,255,0.35); }
-        .custom-select-btn .chevron { font-size: 14px; color: rgba(255,255,255,0.4); flex-shrink: 0; transition: transform 0.2s; }
-        .custom-select-btn.open .chevron { transform: rotate(180deg); }
-        .custom-select-btn.disabled-field {
-            background: rgba(255,255,255,0.04);
-            color: rgba(255,255,255,0.25);
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .custom-select-btn.field-error { border-color: rgba(226,0,26,0.7); }
-
-        .custom-dropdown {
-            position: absolute; top: calc(100% + 6px); left: 0; right: 0;
-            background: rgba(20,15,40,0.75);
-            backdrop-filter: blur(30px) saturate(160%);
-            -webkit-backdrop-filter: blur(30px) saturate(160%);
-            border: 0.5px solid rgba(255,255,255,0.25);
-            border-radius: 12px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.3) inset;
-            z-index: 2000;
-            max-height: 220px; overflow-y: auto;
-            display: none; padding: 4px;
-        }
-        .custom-dropdown.open { display: block; }
-
-        .custom-dropdown-item {
-            padding: 0.5rem 0.85rem; font-size: 0.875rem; border-radius: 8px;
-            cursor: pointer; color: rgba(255,255,255,0.85); transition: background 0.1s;
-            display: flex; align-items: center; gap: 7px;
-        }
-        .custom-dropdown-item:hover { background: rgba(255,255,255,0.1); }
-        .custom-dropdown-item.selected {
-            background: rgba(226,0,26,0.2);
-            color: #ff8a8a;
-            font-weight: 600;
-        }
-        .custom-dropdown-item.placeholder-item { color: rgba(255,255,255,0.3); font-style: italic; pointer-events: none; opacity: 0.6; }
-
-        /* ── Suffix display ── */
-        .suffix-display {
-            font-family: monospace;
-            background: rgba(255,255,255,0.08);
-            border: 0.5px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
-            padding: 0.55rem 0.85rem;
-            font-size: 0.95rem;
-            color: #ff8a8a;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-        }
-
-        /* ── Toggle fonctionnel ── */
-        .toggle-group {
-            display: flex;
-            border: 0.5px solid rgba(255,255,255,0.22);
-            border-radius: 10px;
-            overflow: hidden;
-            background: rgba(255,255,255,0.06);
-        }
-        .toggle-group input[type=radio] { display: none; }
-        .toggle-group label {
-            flex: 1; text-align: center; padding: 0.5rem;
-            font-size: 0.82rem; font-weight: 600;
-            cursor: pointer; display: flex; align-items: center;
-            justify-content: center; gap: 5px;
-            transition: all 0.15s;
-            color: rgba(255,255,255,0.4);
-            background: transparent; border: none; margin: 0;
-        }
-        .toggle-group label:not(:last-child) { border-right: 0.5px solid rgba(255,255,255,0.12); }
-        #fOui:checked + label { background: rgba(46,125,50,0.35); color: #a5d6a7; }
-        #fNon:checked + label { background: rgba(181,0,21,0.35); color: #ef9a9a; }
-
-        /* ── Row 2col ── */
-        .row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-
-        /* ── Emprunteur ── */
-        .emprunteur-cell { display: flex; align-items: center; gap: 7px; }
-        .emp-avatar {
-            width: 26px; height: 26px; border-radius: 50%;
-            background: rgba(226,0,26,0.25);
-            border: 0.5px solid rgba(226,0,26,0.4);
-            color: #ff8a8a;
-            font-size: 11px; font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .drop-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.2); display: inline-block; }
-
-        /* ── Text styles ── */
-        .id-style {
-            font-variation-settings: "wght" 72,"wdth" 50,"GRAD" 0,"ROND" 0,"slnt" 0;
-        }
-        .suffixe-style {
-            font-variation-settings: "wght" 230,"wdth" 76,"GRAD" 0,"ROND" 75,"slnt" -5;
-        }
-        .contenu-style {
-            font-family: "Google Sans Flex", sans-serif;
-            font-optical-sizing: auto;
-            font-weight: 139;
-            font-variation-settings: "slnt" 0,"wdth" 70,"GRAD" 0,"ROND" 0;
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 860px) {
-            .search-wrap { width: 36px; }
-            .search-wrap:focus-within { width: 180px; }
-            .search-input { width: 0; padding: 0; transition: width 0.3s, padding 0.3s; }
-            .search-wrap:focus-within .search-input { width: 140px; padding: 0 8px 0 0; }
-        }
-        @media (max-width: 1100px) {
-            .badge-etat .text-collapse { display: none; }
-            .badge-etat { padding: 4px 6px; }
-            .zone-label { display: none; }
-            .btn-edit .text-collapse { display: none; }
-            .btn-edit { padding: 5px 8px; }
-        }
-
-        /* ── Scrollbar dans la modal ── */
-        .modal-box::-webkit-scrollbar { width: 6px; }
-        .modal-box::-webkit-scrollbar-track { background: transparent; }
-        .modal-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
-    </style>
+.modal-box::-webkit-scrollbar{width:6px}
+.modal-box::-webkit-scrollbar-track{background:transparent}
+.modal-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:3px}
+</style>
 </head>
 <body>
 
 <div class="page-header">
     <div class="header-svg-wrap">
-        <svg viewBox="0 0 804 398" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+        <svg viewBox="0 0 804 398" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2">
             <g transform="matrix(1,0,0,1,-1185.232032,-1281.990164)">
                 <g transform="matrix(0,1,-2.243502,0,3848.40344,315.149584)">
-                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z" style="fill:rgba(255,255,255,0.15);"/>
+                    <path d="M1363.977,918.157L1363.977,1098.552C1363.977,1122.026 1343.056,1144.538 1305.817,1161.137C1268.579,1177.735 1218.072,1187.06 1165.409,1187.06C1055.743,1187.06 966.841,1147.434 966.841,1098.552L966.841,918.157L1165.409,828.781L1363.977,918.157Z" style="fill:rgba(255,255,255,0.15)"/>
                 </g>
                 <g transform="matrix(0.173485,0,0,0.173433,712.57317,1394.882698)">
-                    <path d="M5373,234L5384,390L4904,391C4847,391 4801,436 4801,493C4802,552 4848,598 4905,598L5385,597L5374,754C5287,895 5132,988 4953,988C4682,988 4460,767 4460,493C4460,444 4468,395 4482,350L4327,350L4328,954L3936,954L3935,350L3698,350L3698,35L4564,35L4564,190C4654,74 4795,0 4953,0C5132,0 5287,93 5373,234ZM5374,754L5615,494L5373,234L5373,35L5782,35L5783,623L6137,623L6138,953L5374,954L5374,754Z" style="fill:white;"/>
+                    <path d="M5373,234L5384,390L4904,391C4847,391 4801,436 4801,493C4802,552 4848,598 4905,598L5385,597L5374,754C5287,895 5132,988 4953,988C4682,988 4460,767 4460,493C4460,444 4468,395 4482,350L4327,350L4328,954L3936,954L3935,350L3698,350L3698,35L4564,35L4564,190C4654,74 4795,0 4953,0C5132,0 5287,93 5373,234ZM5374,754L5615,494L5373,234L5373,35L5782,35L5783,623L6137,623L6138,953L5374,954L5374,754Z" style="fill:white"/>
                 </g>
             </g>
         </svg>
     </div>
-    <h1 class="header-title">Gestion des tickets</h1>
+    <h1>Gestion des tickets</h1>
     <div id="syncStatus" class="sync-status idle"><i class="ti ti-cloud"></i> <span>Synchronisé</span></div>
     <div class="search-wrap">
         <button class="search-icon-btn" onclick="document.getElementById('searchInput').focus()" tabindex="-1">
@@ -618,25 +380,23 @@
     <div class="stats-bar" id="statsBar"></div>
     <div class="table-card">
         <table class="table table-borderless mb-0">
-            <thead>
-                <tr>
-                    <th onclick="sortBy('id')">ID complet <i class="ti ti-arrows-sort sort-icon" data-col="id"></i></th>
-                    <th onclick="sortBy('suffixe')">Suffixe <i class="ti ti-arrows-sort sort-icon" data-col="suffixe"></i></th>
-                    <th onclick="sortBy('format')">Format <i class="ti ti-arrows-sort sort-icon" data-col="format"></i></th>
-                    <th onclick="sortBy('contenu')">Contenu <i class="ti ti-arrows-sort sort-icon" data-col="contenu"></i></th>
-                    <th onclick="sortBy('zones')">Zones <i class="ti ti-arrows-sort sort-icon" data-col="zones"></i></th>
-                    <th onclick="sortBy('quantite')">Qté <i class="ti ti-arrows-sort sort-icon" data-col="quantite"></i></th>
-                    <th onclick="sortBy('emprunteur')">Emprunteur <i class="ti ti-arrows-sort sort-icon" data-col="emprunteur"></i></th>
-                    <th onclick="sortBy('fonctionnel')">Fonctionnel <i class="ti ti-arrows-sort sort-icon" data-col="fonctionnel"></i></th>
-                    <th class="no-sort"></th>
-                </tr>
-            </thead>
+            <thead><tr>
+                <th onclick="sortBy('id')">ID complet <i class="ti ti-arrows-sort sort-icon" data-col="id"></i></th>
+                <th onclick="sortBy('suffixe')">Suffixe <i class="ti ti-arrows-sort sort-icon" data-col="suffixe"></i></th>
+                <th onclick="sortBy('format')">Format <i class="ti ti-arrows-sort sort-icon" data-col="format"></i></th>
+                <th onclick="sortBy('contenu')">Contenu <i class="ti ti-arrows-sort sort-icon" data-col="contenu"></i></th>
+                <th onclick="sortBy('zones')">Zones <i class="ti ti-arrows-sort sort-icon" data-col="zones"></i></th>
+                <th onclick="sortBy('quantite')">Qté <i class="ti ti-arrows-sort sort-icon" data-col="quantite"></i></th>
+                <th onclick="sortBy('emprunteur')">Emprunteur <i class="ti ti-arrows-sort sort-icon" data-col="emprunteur"></i></th>
+                <th onclick="sortBy('fonctionnel')">Fonctionnel <i class="ti ti-arrows-sort sort-icon" data-col="fonctionnel"></i></th>
+                <th class="no-sort"></th>
+            </tr></thead>
             <tbody id="ticketBody"></tbody>
         </table>
         <div id="emptyState" class="empty-state" style="display:none">
             <i class="ti ti-ticket-off"></i>
             Aucun ticket enregistré.<br>
-            <small style="color:var(--text-muted)">Cliquez sur « Ajouter un ticket » pour commencer.</small>
+            <small style="color:var(--t3)">Cliquez sur « Ajouter un ticket » pour commencer.</small>
         </div>
     </div>
 </div>
@@ -650,14 +410,10 @@
         <input type="hidden" id="editIndex">
 
         <div class="form-group">
-            <label class="form-label-sm">Numéro de ticket <span id="idCounter" style="font-weight:400;color:var(--text-muted);letter-spacing:0">(0/12 chiffres)</span></label>
+            <label class="form-label-sm">Numéro de ticket <span id="idCounter" style="font-weight:400;color:var(--t3);letter-spacing:0">(0/12 chiffres)</span></label>
             <div id="idWrapper">
-                <span style="padding:0.55rem 0.7rem 0.55rem 0.85rem;font-family:'Google Sans Flex',sans-serif;font-optical-sizing:auto;font-weight:380;font-variation-settings:'slnt' 0,'wdth' 75,'GRAD' 0,'ROND' 100;font-size:0.875rem;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.06);border-right:0.5px solid rgba(255,255,255,0.12);white-space:nowrap;user-select:none">
-                    06-14988599
-                </span>
-                <input type="text" id="mIdSuffix" placeholder="000000000000" maxlength="12"
-                    style="border:none;outline:none;flex:1;padding:0.55rem 0.85rem;font-family:'Google Sans Flex',sans-serif;font-optical-sizing:auto;font-weight:380;font-variation-settings:'slnt' 0,'wdth' 75,'GRAD' 0,'ROND' 100;font-size:0.875rem;color:white;background:transparent;width:100%"
-                    oninput="onIdInput(this)">
+                <span id="idPrefixSpan">06-14988599</span>
+                <input type="text" id="mIdSuffix" placeholder="000000000000" maxlength="12" oninput="onIdInput(this)">
             </div>
             <input type="hidden" id="mId">
             <div id="idError" style="font-size:11px;color:#ff8a8a;margin-top:3px;display:none"></div>
@@ -676,27 +432,7 @@
                     <button type="button" class="custom-select-btn placeholder" id="btnContenu" onclick="toggleDropdown('Contenu')">
                         <span id="lblContenu">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
                     </button>
-                    <div class="custom-dropdown" id="dropContenu">
-                        <div class="custom-dropdown-item placeholder-item">Sélectionner…</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Vide')">Vide</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Inconnu')">Inconnu</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage')">1 voyage</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','1 voyage à bord')">1 voyage à bord</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages')">10 voyages</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages (-26 ans/étudiants)')">10 voyages (-26 ans/étudiants)</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','10 voyages famille nombreuse')">10 voyages famille nombreuse</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 24h')">Pass 24h</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 48h')">Pass 48h</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 72h')">Pass 72h</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass 7 jours')">Pass 7 jours</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass tribu')">Pass tribu</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Groupe 10 personnes')">Groupe 10 personnes</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller simple Navigône')">Aller simple Navigône</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Navigône')">Aller-retour Navigône</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Aller-retour Funiculaire')">Aller-retour Funiculaire</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass TCL en fête')">Pass TCL en fête</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Contenu','Pass Pic Pollution')">Pass Pic Pollution</div>
-                    </div>
+                    <div class="custom-dropdown" id="dropContenu"></div>
                     <input type="hidden" id="mContenu">
                 </div>
             </div>
@@ -706,17 +442,7 @@
                     <button type="button" class="custom-select-btn placeholder" id="btnFormat" onclick="toggleDropdown('Format')">
                         <span id="lblFormat">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
                     </button>
-                    <div class="custom-dropdown" id="dropFormat">
-                        <div class="custom-dropdown-item placeholder-item">Sélectionner…</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','DAB')"><span class="drop-dot" style="background:#E2001A"></span>DAB</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rose Bus')"><span class="drop-dot" style="background:#e91e8c"></span>Rose Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Bleu Bus')"><span class="drop-dot" style="background:#1a56c4"></span>Bleu Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Orange Bus')"><span class="drop-dot" style="background:#e07b00"></span>Orange Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Vert Bus')"><span class="drop-dot" style="background:#2e7d32"></span>Vert Bus</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Agence')"><span class="drop-dot" style="background:#E2001A"></span>Agence</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Paris 2024')"><span class="drop-dot" style="background:#1a56c4"></span>Paris 2024</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Format','Rectangle')"><span class="drop-dot" style="background:#E2001A"></span>Rectangle</div>
-                    </div>
+                    <div class="custom-dropdown" id="dropFormat"></div>
                     <input type="hidden" id="mFormat">
                 </div>
             </div>
@@ -729,19 +455,7 @@
                     <button type="button" class="custom-select-btn placeholder" id="btnZones" onclick="toggleDropdown('Zones')">
                         <span id="lblZones">Sélectionner…</span><i class="ti ti-chevron-down chevron"></i>
                     </button>
-                    <div class="custom-dropdown" id="dropZones">
-                        <div class="custom-dropdown-item placeholder-item">Sélectionner…</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z1 & 2')"><span class="drop-dot" style="background:#E2001A"></span><span class="drop-dot" style="background:#e07b00"></span>Z1 &amp; 2</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & 3')"><span class="drop-dot" style="background:#e07b00"></span><span class="drop-dot" style="background:#2e7d32"></span>Z2 &amp; 3</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & 4')"><span class="drop-dot" style="background:#2e7d32"></span><span class="drop-dot" style="background:#1a56c4"></span>Z3 &amp; 4</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & 5')"><span class="drop-dot" style="background:#1a56c4"></span><span class="drop-dot" style="background:#e91e8c"></span>Z4 &amp; 5</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z2 & EXT')"><span class="drop-dot" style="background:#e07b00"></span><span class="drop-dot" style="background:#f5c518"></span>Z2 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z3 & EXT')"><span class="drop-dot" style="background:#2e7d32"></span><span class="drop-dot" style="background:#f5c518"></span>Z3 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z4 & EXT')"><span class="drop-dot" style="background:#1a56c4"></span><span class="drop-dot" style="background:#f5c518"></span>Z4 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Z5 & EXT')"><span class="drop-dot" style="background:#e91e8c"></span><span class="drop-dot" style="background:#f5c518"></span>Z5 &amp; EXT</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones sauf Z1')"><span class="drop-dot" style="background:#7c3aed"></span><span class="drop-dot" style="background:#E2001A"></span>Toutes zones sauf Z1</div>
-                        <div class="custom-dropdown-item" onclick="selectOption('Zones','Toutes zones')"><span class="drop-dot" style="background:#7c3aed"></span>Toutes zones</div>
-                    </div>
+                    <div class="custom-dropdown" id="dropZones"></div>
                     <input type="hidden" id="mZones">
                 </div>
             </div>
@@ -776,454 +490,484 @@
 </div>
 
 <script>
-    const API_URL = 'https://api.npoint.io/31ba31f685940c724c54';
-    const PREFIX  = '06-14988599';
-    const VAR_LEN = 12;
+const API_URL = 'https://api.npoint.io/31ba31f685940c724c54';
+const PREFIX  = '06-14988599';
+const VAR_LEN = 12;
 
-    let tickets = [];
-    let sortColumn    = 'id';
-    let sortDirection = 'asc';
+let tickets = [];
+let sortColumn    = 'id';
+let sortDirection = 'asc';
 
-    const ZONE_COLORS = {
-        'Z1': '#E2001A', 'Z2': '#e07b00', 'Z3': '#2e7d32',
-        'Z4': '#1a56c4', 'Z5': '#e91e8c', 'HZ': '#f5c518', 'TZ': '#7c3aed'
+// ── DOM cache ──
+const $ = id => document.getElementById(id);
+
+// ── Dropdown data ──
+const DROPDOWN_DATA = {
+    Contenu: [
+        'Vide','Inconnu','1 voyage','1 voyage à bord','10 voyages',
+        '10 voyages (-26 ans/étudiants)','10 voyages famille nombreuse',
+        'Pass 24h','Pass 48h','Pass 72h','Pass 7 jours','Pass tribu',
+        'Groupe 10 personnes','Aller simple Navigône','Aller-retour Navigône',
+        'Aller-retour Funiculaire','Pass TCL en fête','Pass Pic Pollution'
+    ],
+    Format: [
+        {v:'DAB',c:'#E2001A'},{v:'Rose Bus',c:'#e91e8c'},{v:'Bleu Bus',c:'#1a56c4'},
+        {v:'Orange Bus',c:'#e07b00'},{v:'Vert Bus',c:'#2e7d32'},{v:'Agence',c:'#E2001A'},
+        {v:'Paris 2024',c:'#1a56c4'},{v:'Rectangle',c:'#E2001A'}
+    ],
+    Zones: [
+        {v:'Z1 & 2',  dots:['#E2001A','#e07b00']},
+        {v:'Z2 & 3',  dots:['#e07b00','#2e7d32']},
+        {v:'Z3 & 4',  dots:['#2e7d32','#1a56c4']},
+        {v:'Z4 & 5',  dots:['#1a56c4','#e91e8c']},
+        {v:'Z2 & EXT',dots:['#e07b00','#f5c518']},
+        {v:'Z3 & EXT',dots:['#2e7d32','#f5c518']},
+        {v:'Z4 & EXT',dots:['#1a56c4','#f5c518']},
+        {v:'Z5 & EXT',dots:['#e91e8c','#f5c518']},
+        {v:'Toutes zones sauf Z1',dots:['#7c3aed','#E2001A']},
+        {v:'Toutes zones',dots:['#7c3aed']}
+    ]
+};
+
+const ZONE_MAP = Object.fromEntries(
+    DROPDOWN_DATA.Zones.map(z => [z.v, z.dots])
+);
+
+// Build dropdowns once at init
+function buildDropdowns() {
+    const build = (name, items) => {
+        const drop = $('drop' + name);
+        const frag = document.createDocumentFragment();
+        const placeholder = document.createElement('div');
+        placeholder.className = 'custom-dropdown-item placeholder-item';
+        placeholder.textContent = 'Sélectionner…';
+        frag.appendChild(placeholder);
+        items.forEach(item => {
+            const el = document.createElement('div');
+            el.className = 'custom-dropdown-item';
+            el.onclick = () => selectOption(name, typeof item === 'string' ? item : item.v);
+            if (typeof item === 'string') {
+                el.textContent = item;
+            } else if (name === 'Format') {
+                el.innerHTML = `<span class="drop-dot" style="background:${item.c}"></span>${item.v}`;
+            } else {
+                el.innerHTML = item.dots.map(c => `<span class="drop-dot" style="background:${c}"></span>`).join('') + item.v;
+            }
+            frag.appendChild(el);
+        });
+        drop.appendChild(frag);
     };
+    build('Contenu', DROPDOWN_DATA.Contenu);
+    build('Format',  DROPDOWN_DATA.Format);
+    build('Zones',   DROPDOWN_DATA.Zones);
+}
 
-    function zonesDots(val) {
-        if (!val || val === '—') return '';
-        const map = {
-            'Z1 & 2':             ['Z1','Z2'],
-            'Z2 & 3':             ['Z2','Z3'],
-            'Z3 & 4':             ['Z3','Z4'],
-            'Z4 & 5':             ['Z4','Z5'],
-            'Z2 & EXT':           ['Z2','HZ'],
-            'Z3 & EXT':           ['Z3','HZ'],
-            'Z4 & EXT':           ['Z4','HZ'],
-            'Z5 & EXT':           ['Z5','HZ'],
-            'Toutes zones sauf Z1':['TZ','Z1'],
-            'Toutes zones':       ['TZ'],
-        };
-        const keys = map[val];
-        if (!keys) return '';
-        return keys.map(k => `<span class="zone-dot" style="background:${ZONE_COLORS[k]}" title="${k}"></span>`).join('');
-    }
+// ── Zone rendering ──
+function zonesDots(val) {
+    if (!val || val === '—') return '';
+    const dots = ZONE_MAP[val];
+    return dots ? dots.map(c => `<span class="zone-dot" style="background:${c}"></span>`).join('') : '';
+}
 
-    function formatClass(f) {
-        const rouge  = ['DAB','Vert Bus','Agence','Rectangle'];
-        const bleu   = ['Bleu Bus','Paris 2024'];
-        const rose   = ['Rose Bus'];
-        const orange = ['Orange Bus'];
-        if (rouge.includes(f))  return 'rouge';
-        if (bleu.includes(f))   return 'bleu';
-        if (rose.includes(f))   return 'rose';
-        if (orange.includes(f)) return 'orange';
-        return 'grey';
-    }
+// ── Format badge class ──
+const FORMAT_CLASS = {
+    DAB:'rouge','Vert Bus':'rouge',Agence:'rouge',Rectangle:'rouge',
+    'Bleu Bus':'bleu','Paris 2024':'bleu','Rose Bus':'rose','Orange Bus':'orange'
+};
+const formatClass = f => FORMAT_CLASS[f] || 'grey';
 
-    function setSync(state, msg) {
-        const el = document.getElementById('syncStatus');
-        const icons = { idle:'ti-cloud', saving:'ti-cloud-upload', ok:'ti-cloud-check', error:'ti-cloud-x' };
-        el.className = `sync-status ${state}`;
-        el.innerHTML = `<i class="ti ${icons[state]}"></i> <span>${msg}</span>`;
-    }
+// ── Sync status ──
+const SYNC_ICONS = {idle:'ti-cloud',saving:'ti-cloud-upload',ok:'ti-cloud-check',error:'ti-cloud-x'};
+function setSync(state, msg) {
+    const el = $('syncStatus');
+    el.className = `sync-status ${state}`;
+    el.innerHTML = `<i class="ti ${SYNC_ICONS[state]}"></i> <span>${msg}</span>`;
+}
 
-    async function charger() {
-        setSync('saving', 'Chargement…');
-        try {
-            const r = await fetch(API_URL);
-            if (!r.ok) throw new Error(r.status);
-            const json = await r.json();
-            tickets = Array.isArray(json) ? json : (json.data || []);
-            localStorage.setItem('mesTickets', JSON.stringify(tickets));
-            setSync('ok', 'Synchronisé');
-        } catch(e) {
-            tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
-            setSync('error', 'Hors ligne');
-        }
-        render();
-    }
-
-    async function sauvegarderAPI() {
-        setSync('saving', 'Sauvegarde…');
+// ── API ──
+async function charger() {
+    setSync('saving', 'Chargement…');
+    try {
+        const r = await fetch(API_URL);
+        if (!r.ok) throw new Error(r.status);
+        const json = await r.json();
+        tickets = Array.isArray(json) ? json : (json.data || []);
         localStorage.setItem('mesTickets', JSON.stringify(tickets));
-        try {
-            const r = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(tickets)
-            });
-            if (!r.ok) throw new Error(r.status);
-            setSync('ok', 'Synchronisé');
-        } catch(e) {
-            setSync('error', 'Erreur sync');
-        }
+        setSync('ok', 'Synchronisé');
+    } catch {
+        tickets = JSON.parse(localStorage.getItem('mesTickets')) || [];
+        setSync('error', 'Hors ligne');
     }
+    render();
+}
 
-    function closeAllDropdowns(except) {
-        ['Format','Zones','Contenu'].forEach(name => {
-            if (name === except) return;
-            document.getElementById('drop'+name)?.classList.remove('open');
-            document.getElementById('btn'+name)?.classList.remove('open');
+async function sauvegarderAPI() {
+    setSync('saving', 'Sauvegarde…');
+    localStorage.setItem('mesTickets', JSON.stringify(tickets));
+    try {
+        const r = await fetch(API_URL, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(tickets)
         });
+        if (!r.ok) throw new Error(r.status);
+        setSync('ok', 'Synchronisé');
+    } catch {
+        setSync('error', 'Erreur sync');
     }
+}
 
-    function toggleDropdown(name) {
-        const btn  = document.getElementById('btn'+name);
-        const drop = document.getElementById('drop'+name);
-        if (btn.classList.contains('disabled-field')) return;
-        const isOpen = drop.classList.contains('open');
-        closeAllDropdowns(null);
-        if (!isOpen) { drop.classList.add('open'); btn.classList.add('open'); }
+// ── Dropdowns ──
+function closeAllDropdowns(except) {
+    ['Format','Zones','Contenu'].forEach(name => {
+        if (name === except) return;
+        $('drop'+name).classList.remove('open');
+        $('btn'+name).classList.remove('open');
+    });
+}
+
+function toggleDropdown(name) {
+    const btn  = $('btn'+name);
+    const drop = $('drop'+name);
+    if (btn.classList.contains('disabled-field')) return;
+    const isOpen = drop.classList.contains('open');
+    closeAllDropdowns(null);
+    if (!isOpen) { drop.classList.add('open'); btn.classList.add('open'); }
+}
+
+function selectOption(name, value) {
+    const lbl  = $('lbl'+name);
+    const btn  = $('btn'+name);
+    const inp  = $('m'+name);
+    const drop = $('drop'+name);
+    inp.value  = value;
+    if (name === 'Zones' && value) {
+        lbl.innerHTML = zonesDots(value) + `<span style="margin-left:4px">${value}</span>`;
+    } else {
+        lbl.textContent = value || 'Sélectionner…';
     }
+    btn.classList.toggle('placeholder', !value);
+    btn.classList.remove('field-error', 'open');
+    drop.querySelectorAll('.custom-dropdown-item:not(.placeholder-item)').forEach(el => {
+        el.classList.toggle('selected', el.textContent.trim() === value && !!value);
+    });
+    drop.classList.remove('open');
+    if (name === 'Contenu') onContenuChange(value);
+}
 
-    function selectOption(name, value) {
-        const lbl  = document.getElementById('lbl'+name);
-        const btn  = document.getElementById('btn'+name);
-        const inp  = document.getElementById('m'+name);
-        const drop = document.getElementById('drop'+name);
-        inp.value = value;
-        if (name === 'Zones' && value) {
-            lbl.innerHTML = zonesDots(value) + '<span style="margin-left:4px">' + value + '</span>';
-        } else {
-            lbl.textContent = value || 'Sélectionner…';
-        }
-        btn.classList.toggle('placeholder', !value);
-        btn.classList.remove('field-error');
-        drop.querySelectorAll('.custom-dropdown-item:not(.placeholder-item)').forEach(el => {
-            el.classList.toggle('selected', el.textContent.trim() === value && value !== '');
-        });
-        drop.classList.remove('open');
+const setDropdownValue    = selectOption;
+const setDropdownDisabled = (name, disabled, displayValue) => {
+    const btn = $('btn'+name);
+    const inp = $('m'+name);
+    const lbl = $('lbl'+name);
+    if (disabled) {
+        btn.classList.add('disabled-field');
+        inp.value      = displayValue ?? '—';
+        lbl.textContent = displayValue ?? '—';
+        btn.classList.remove('placeholder');
+        $('drop'+name).classList.remove('open');
         btn.classList.remove('open');
-        if (name === 'Contenu') onContenuChange(value);
+    } else {
+        btn.classList.remove('disabled-field');
     }
+};
 
-    function setDropdownValue(name, value) { selectOption(name, value); }
+document.addEventListener('click', e => {
+    if (!e.target.closest('.custom-select-wrap')) closeAllDropdowns(null);
+});
 
-    function setDropdownDisabled(name, disabled, displayValue) {
-        const btn = document.getElementById('btn'+name);
-        const inp = document.getElementById('m'+name);
-        const lbl = document.getElementById('lbl'+name);
-        if (disabled) {
-            btn.classList.add('disabled-field');
-            inp.value = displayValue ?? '—';
-            lbl.textContent = displayValue ?? '—';
-            btn.classList.remove('placeholder');
-            document.getElementById('drop'+name).classList.remove('open');
-            btn.classList.remove('open');
-        } else {
-            btn.classList.remove('disabled-field');
-        }
+// ── Form logic ──
+function onContenuChange(value) {
+    const isVide    = value === 'Vide';
+    const isInconnu = value === 'Inconnu';
+    const isNon     = document.querySelector('input[name="mFonctionnel"]:checked')?.value === 'non';
+    if (isNon) return;
+    setDropdownDisabled('Zones', isVide || isInconnu, isVide || isInconnu ? '—' : undefined);
+    const qteInp = $('mQte');
+    const qteReq = $('qteRequired');
+    if (isVide) {
+        qteInp.value = '0'; qteInp.disabled = true; qteReq.style.display = 'none';
+    } else if (isInconnu) {
+        qteInp.value = '—'; qteInp.disabled = true; qteReq.style.display = 'none';
+    } else {
+        qteInp.disabled = false; qteReq.style.display = 'inline';
+        if (qteInp.value === '0' || qteInp.value === '—') qteInp.value = '';
     }
+}
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.custom-select-wrap')) closeAllDropdowns(null);
-    });
-
-    function onContenuChange(value) {
-        const isVide    = value === 'Vide';
-        const isInconnu = value === 'Inconnu';
-        const isNonFonc = document.querySelector('input[name="mFonctionnel"]:checked')?.value === 'non';
-        if (isNonFonc) return;
-        if (isVide || isInconnu) {
-            setDropdownDisabled('Zones', true, '—');
-        } else {
-            setDropdownDisabled('Zones', false);
-        }
-        const qteInp = document.getElementById('mQte');
-        const qteReq = document.getElementById('qteRequired');
-        if (isVide) {
-            qteInp.value = '0'; qteInp.disabled = true;
-            qteReq.style.display = 'none';
-        } else if (isInconnu) {
-            qteInp.value = '—'; qteInp.disabled = true;
-            qteReq.style.display = 'none';
-        } else {
-            qteInp.disabled = false;
-            qteReq.style.display = 'inline';
-            if (qteInp.value === '0' || qteInp.value === '—') qteInp.value = '';
-        }
+function setNonFoncMode(isNon) {
+    const qteInp   = $('mQte');
+    const mContenu = $('mContenu');
+    const mZones   = $('mZones');
+    if (isNon) {
+        mContenu.dataset.prev = mContenu.value;
+        mZones.dataset.prev   = mZones.value;
+        qteInp.dataset.prev   = qteInp.value;
+        setDropdownDisabled('Contenu', true, '—');
+        setDropdownDisabled('Zones',   true, '—');
+        qteInp.value = '—'; qteInp.disabled = true;
+        $('qteRequired').style.display = 'none';
+    } else {
+        setDropdownDisabled('Contenu', false);
+        setDropdownDisabled('Zones',   false);
+        qteInp.disabled = false;
+        if (mContenu.value === '—') setDropdownValue('Contenu', mContenu.dataset.prev || '');
+        if (mZones.value   === '—') setDropdownValue('Zones',   mZones.dataset.prev   || '');
+        if (qteInp.value   === '—') qteInp.value = qteInp.dataset.prev || '';
+        onContenuChange(mContenu.value);
     }
+}
 
-    function setNonFoncMode(isNon) {
-        const qteInp = document.getElementById('mQte');
+document.querySelectorAll('input[name="mFonctionnel"]').forEach(r =>
+    r.addEventListener('change', function() { setNonFoncMode(this.value === 'non'); })
+);
+
+function onIdInput(el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, VAR_LEN);
+    const n = el.value.length;
+    $('idCounter').textContent = `(${n}/${VAR_LEN} chiffres)`;
+    const err = n > 0 && n < VAR_LEN;
+    const errEl = $('idError');
+    errEl.style.display    = err ? 'block' : 'none';
+    errEl.textContent      = err ? '12 chiffres requis (chiffres uniquement)' : '';
+    $('idWrapper').style.borderColor = err ? 'rgba(226,0,26,0.7)' : 'rgba(255,255,255,0.22)';
+    const full = PREFIX + el.value;
+    $('mId').value = full;
+    const s = full.length >= 23 ? full.slice(17, 23) : (full.length > 17 ? full.slice(17) : '');
+    $('mSuffixe').value = s;
+    $('mSuffixeDisplay').textContent = s || '—';
+}
+
+function resetModal() {
+    $('mIdSuffix').value = '';
+    $('mId').value = '';
+    $('idCounter').textContent = `(0/${VAR_LEN} chiffres)`;
+    $('mSuffixe').value = '';
+    $('mSuffixeDisplay').textContent = '—';
+    $('idError').style.display = 'none';
+    $('idWrapper').style.borderColor = 'rgba(255,255,255,0.22)';
+    const qteInp = $('mQte');
+    qteInp.value = ''; qteInp.disabled = false;
+    $('qteError').style.display = 'none';
+    $('qteRequired').style.display = 'none';
+    $('mEmp').value = '';
+    document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
+    setDropdownDisabled('Contenu', false); setDropdownValue('Contenu', '');
+    setDropdownDisabled('Zones',   false); setDropdownValue('Zones',   '');
+    setDropdownValue('Format', '');
+    const mContenu = $('mContenu');
+    const mZones   = $('mZones');
+    delete mContenu.dataset.prev;
+    delete mZones.dataset.prev;
+    delete qteInp.dataset.prev;
+    closeAllDropdowns(null);
+}
+
+function ouvrirModal(index = -1) {
+    $('editIndex').value = index;
+    $('btnSupp').style.display = index === -1 ? 'none' : 'inline-flex';
+    $('modalTitle').innerHTML = index === -1
+        ? '<i class="ti ti-ticket"></i> Nouveau ticket'
+        : '<i class="ti ti-edit"></i> Modifier le ticket';
+    resetModal();
+    if (index !== -1) {
+        const t = tickets[index];
+        const varPart = t.id.startsWith(PREFIX) ? t.id.slice(PREFIX.length) : t.id;
+        $('mIdSuffix').value = varPart;
+        $('mId').value = t.id;
+        $('idCounter').textContent = `(${varPart.length}/${VAR_LEN} chiffres)`;
+        $('mSuffixe').value = t.suffixe;
+        $('mSuffixeDisplay').textContent = t.suffixe || '—';
+        setDropdownValue('Format', t.format || '');
+        $('mEmp').value = t.emprunteur === '—' ? '' : (t.emprunteur || '');
+        const isNon = t.fonctionnel === 'non';
+        if (t.fonctionnel) {
+            const r = document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`);
+            if (r) r.checked = true;
+        }
         if (isNon) {
-            document.getElementById('mContenu').dataset.prev = document.getElementById('mContenu').value;
-            document.getElementById('mZones').dataset.prev   = document.getElementById('mZones').value;
-            qteInp.dataset.prev = qteInp.value;
-            setDropdownDisabled('Contenu', true, '—');
-            setDropdownDisabled('Zones',   true, '—');
-            qteInp.value = '—'; qteInp.disabled = true;
-            document.getElementById('qteRequired').style.display = 'none';
+            setNonFoncMode(true);
         } else {
-            setDropdownDisabled('Contenu', false);
-            setDropdownDisabled('Zones',   false);
-            qteInp.disabled = false;
-            const prevC = document.getElementById('mContenu').dataset.prev || '';
-            const prevZ = document.getElementById('mZones').dataset.prev   || '';
-            if (document.getElementById('mContenu').value === '—') setDropdownValue('Contenu', prevC);
-            if (document.getElementById('mZones').value   === '—') setDropdownValue('Zones',   prevZ);
-            if (qteInp.value === '—') qteInp.value = qteInp.dataset.prev || '';
-            onContenuChange(document.getElementById('mContenu').value);
+            setDropdownValue('Contenu', t.contenu || '');
+            setDropdownValue('Zones',   t.zones   || '');
+            $('mQte').value = t.quantite || '';
+            onContenuChange(t.contenu || '');
         }
     }
+    $('myModal').classList.add('open');
+}
 
-    document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.addEventListener('change', function() {
-        setNonFoncMode(this.value === 'non');
-    }));
+function fermerModal() {
+    $('myModal').classList.remove('open');
+    closeAllDropdowns(null);
+}
 
-    function onIdInput(el) {
-        el.value = el.value.replace(/[^0-9]/g, '').slice(0, VAR_LEN);
-        const n = el.value.length;
-        document.getElementById('idCounter').textContent = `(${n}/${VAR_LEN} chiffres)`;
-        const err = n > 0 && n < VAR_LEN;
-        document.getElementById('idError').style.display = err ? 'block' : 'none';
-        document.getElementById('idError').textContent = err ? '12 chiffres requis (chiffres uniquement)' : '';
-        document.getElementById('idWrapper').style.borderColor = err ? 'rgba(226,0,26,0.7)' : 'rgba(255,255,255,0.22)';
-        const full = PREFIX + el.value;
-        document.getElementById('mId').value = full;
-        const s = full.length >= 23 ? full.slice(17, 23) : (full.length > 17 ? full.slice(17) : '');
-        document.getElementById('mSuffixe').value = s;
-        document.getElementById('mSuffixeDisplay').textContent = s || '—';
+function sauvegarder() {
+    let hasError = false;
+    const varPart   = $('mIdSuffix').value;
+    const idWrapper = $('idWrapper');
+    const idError   = $('idError');
+
+    if (varPart.length !== VAR_LEN) {
+        idError.textContent = '12 chiffres requis (chiffres uniquement)';
+        idError.style.display = 'block';
+        idWrapper.style.borderColor = 'rgba(226,0,26,0.7)';
+        hasError = true;
     }
-
-    function resetModal() {
-        document.getElementById('mIdSuffix').value = '';
-        document.getElementById('mId').value = '';
-        document.getElementById('idCounter').textContent = `(0/${VAR_LEN} chiffres)`;
-        document.getElementById('mSuffixe').value = '';
-        document.getElementById('mSuffixeDisplay').textContent = '—';
-        document.getElementById('idError').style.display = 'none';
-        document.getElementById('idWrapper').style.borderColor = 'rgba(255,255,255,0.22)';
-        const qteInp = document.getElementById('mQte');
-        qteInp.value = ''; qteInp.disabled = false;
-        document.getElementById('qteError').style.display = 'none';
-        document.getElementById('qteRequired').style.display = 'none';
-        document.getElementById('mEmp').value = '';
-        document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
-        setDropdownDisabled('Contenu', false); setDropdownValue('Contenu', '');
-        setDropdownDisabled('Zones',   false); setDropdownValue('Zones',   '');
-        setDropdownValue('Format', '');
-        delete document.getElementById('mContenu').dataset.prev;
-        delete document.getElementById('mZones').dataset.prev;
-        delete qteInp.dataset.prev;
-        closeAllDropdowns(null);
+    const editIndex = parseInt($('editIndex').value);
+    const fullId    = $('mId').value;
+    const doublon   = tickets.findIndex((t, i) => t.id === fullId && i !== editIndex);
+    if (doublon !== -1) {
+        idError.textContent = `Ce numéro existe déjà (ticket #${doublon + 1})`;
+        idError.style.display = 'block';
+        idWrapper.style.borderColor = 'rgba(226,0,26,0.7)';
+        hasError = true;
     }
+    const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
+    const isNon       = fonctionnel === 'non';
+    const contenu     = $('mContenu').value;
+    const isVide      = contenu === 'Vide';
+    const isInconnu   = contenu === 'Inconnu';
+    if (!isNon && !isVide && !isInconnu) {
+        const qte = $('mQte').value.trim();
+        const qteOk = qte && !isNaN(qte) && parseInt(qte) >= 1;
+        $('qteError').style.display   = qteOk ? 'none' : 'block';
+        $('mQte').classList.toggle('field-error', !qteOk);
+        if (!qteOk) hasError = true;
+    }
+    if (hasError) return;
+    const empRaw = $('mEmp').value.trim();
+    const ticket = {
+        id:          fullId,
+        suffixe:     $('mSuffixe').value,
+        format:      $('mFormat').value,
+        contenu:     isNon ? '—' : contenu,
+        zones:       isNon ? '—' : $('mZones').value,
+        quantite:    isNon ? '—' : $('mQte').value,
+        emprunteur:  empRaw || '—',
+        fonctionnel
+    };
+    if (editIndex === -1) tickets.push(ticket);
+    else tickets[editIndex] = ticket;
+    sauvegarderAPI();
+    fermerModal();
+    render();
+}
 
-    function ouvrirModal(index = -1) {
-        document.getElementById('editIndex').value = index;
-        document.getElementById('btnSupp').style.display = index === -1 ? 'none' : 'inline-flex';
-        document.getElementById('modalTitle').innerHTML = index === -1
-            ? '<i class="ti ti-ticket"></i> Nouveau ticket'
-            : '<i class="ti ti-edit"></i> Modifier le ticket';
-        resetModal();
-        if (index !== -1) {
-            const t = tickets[index];
-            const varPart = t.id.startsWith(PREFIX) ? t.id.slice(PREFIX.length) : t.id;
-            document.getElementById('mIdSuffix').value = varPart;
-            document.getElementById('mId').value = t.id;
-            document.getElementById('idCounter').textContent = `(${varPart.length}/${VAR_LEN} chiffres)`;
-            document.getElementById('mSuffixe').value = t.suffixe;
-            document.getElementById('mSuffixeDisplay').textContent = t.suffixe || '—';
-            setDropdownValue('Format', t.format || '');
-            document.getElementById('mEmp').value = t.emprunteur === '—' ? '' : (t.emprunteur || '');
-            const isNon = t.fonctionnel === 'non';
-            if (t.fonctionnel) {
-                const r = document.querySelector(`input[name="mFonctionnel"][value="${t.fonctionnel}"]`);
-                if (r) r.checked = true;
-            }
-            if (isNon) {
-                setNonFoncMode(true);
-            } else {
-                setDropdownValue('Contenu', t.contenu || '');
-                setDropdownValue('Zones',   t.zones   || '');
-                document.getElementById('mQte').value = t.quantite || '';
-                onContenuChange(t.contenu || '');
-            }
+function supprimer() {
+    tickets.splice(parseInt($('editIndex').value), 1);
+    sauvegarderAPI();
+    fermerModal();
+    render();
+}
+
+function sortBy(column) {
+    sortDirection = sortColumn === column ? (sortDirection === 'asc' ? 'desc' : 'asc') : 'asc';
+    sortColumn = column;
+    render();
+}
+
+function getTicketsTries() {
+    const q = $('searchInput').value.toLowerCase();
+    let indexed = tickets.map((t, i) => ({t, i}));
+    if (q) {
+        indexed = indexed.filter(({t}) =>
+            [t.suffixe, t.contenu, t.id, t.emprunteur].some(v => (v || '').toLowerCase().includes(q))
+        );
+    }
+    indexed.sort((a, b) => {
+        let va = a.t[sortColumn], vb = b.t[sortColumn];
+        if (sortColumn === 'quantite') {
+            const na = (va === '—' || !va || isNaN(va)) ? -Infinity : parseFloat(va);
+            const nb = (vb === '—' || !vb || isNaN(vb)) ? -Infinity : parseFloat(vb);
+            return sortDirection === 'asc' ? na - nb : nb - na;
         }
-        document.getElementById('myModal').classList.add('open');
-    }
-
-    function fermerModal() {
-        document.getElementById('myModal').classList.remove('open');
-        closeAllDropdowns(null);
-    }
-
-    function sauvegarder() {
-        let hasError = false;
-        const varPart = document.getElementById('mIdSuffix').value;
-        if (varPart.length !== VAR_LEN) {
-            document.getElementById('idError').textContent = '12 chiffres requis (chiffres uniquement)';
-            document.getElementById('idError').style.display = 'block';
-            document.getElementById('idWrapper').style.borderColor = 'rgba(226,0,26,0.7)';
-            hasError = true;
-        }
-        const editIndex = parseInt(document.getElementById('editIndex').value);
-        const fullId    = document.getElementById('mId').value;
-        const doublon = tickets.findIndex((t, i) => t.id === fullId && i !== editIndex);
-        if (doublon !== -1) {
-            document.getElementById('idError').textContent = 'Ce numéro existe déjà (ticket #' + (doublon+1) + ')';
-            document.getElementById('idError').style.display = 'block';
-            document.getElementById('idWrapper').style.borderColor = 'rgba(226,0,26,0.7)';
-            hasError = true;
-        }
-        const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
-        const isNon       = fonctionnel === 'non';
-        const contenu     = document.getElementById('mContenu').value;
-        const isVide      = contenu === 'Vide';
-        const isInconnu   = contenu === 'Inconnu';
-        if (!isNon && !isVide && !isInconnu) {
-            const qte = document.getElementById('mQte').value.trim();
-            if (!qte || isNaN(qte) || parseInt(qte) < 1) {
-                document.getElementById('qteError').style.display = 'block';
-                document.getElementById('mQte').classList.add('field-error');
-                hasError = true;
-            } else {
-                document.getElementById('qteError').style.display = 'none';
-                document.getElementById('mQte').classList.remove('field-error');
-            }
-        }
-        if (hasError) return;
-        const empRaw = document.getElementById('mEmp').value.trim();
-        const ticket = {
-            id:          fullId,
-            suffixe:     document.getElementById('mSuffixe').value,
-            format:      document.getElementById('mFormat').value,
-            contenu:     isNon ? '—' : contenu,
-            zones:       isNon ? '—' : document.getElementById('mZones').value,
-            quantite:    isNon ? '—' : document.getElementById('mQte').value,
-            emprunteur:  empRaw === '' ? '—' : empRaw,
-            fonctionnel: fonctionnel
-        };
-        if (editIndex === -1) tickets.push(ticket); else tickets[editIndex] = ticket;
-        sauvegarderAPI();
-        fermerModal();
-        render();
-    }
-
-    function supprimer() {
-        const index = parseInt(document.getElementById('editIndex').value);
-        tickets.splice(index, 1);
-        sauvegarderAPI();
-        fermerModal();
-        render();
-    }
-
-    function sortBy(column) {
-        if (sortColumn === column) sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-        else { sortColumn = column; sortDirection = 'asc'; }
-        render();
-    }
-
-    function getTicketsTries() {
-        const q = document.getElementById('searchInput').value.toLowerCase();
-        let indexed = tickets.map((t, i) => ({ t, i }));
-        if (q) {
-            indexed = indexed.filter(({t}) =>
-                (t.suffixe || '').toLowerCase().includes(q) ||
-                (t.contenu || '').toLowerCase().includes(q) ||
-                (t.id || '').toLowerCase().includes(q) ||
-                (t.emprunteur || '').toLowerCase().includes(q)
-            );
-        }
-        if (!sortColumn) return indexed;
-        indexed.sort((a, b) => {
-            let va = a.t[sortColumn], vb = b.t[sortColumn];
-            if (sortColumn === 'quantite') {
-                const na = (va === '—' || va === '' || va == null || isNaN(va)) ? -Infinity : parseFloat(va);
-                const nb = (vb === '—' || vb === '' || vb == null || isNaN(vb)) ? -Infinity : parseFloat(vb);
-                return sortDirection === 'asc' ? na - nb : nb - na;
-            }
-            va = (va ?? '').toString(); vb = (vb ?? '').toString();
-            const cmp = va.localeCompare(vb, 'fr', { numeric: true, sensitivity: 'base' });
-            return sortDirection === 'asc' ? cmp : -cmp;
-        });
-        return indexed;
-    }
-
-    function majIconesTri() {
-        document.querySelectorAll('.table-card thead th').forEach(th => th.classList.remove('sorted-col'));
-        document.querySelectorAll('.sort-icon').forEach(icon => {
-            const col = icon.dataset.col;
-            icon.classList.remove('ti-arrows-sort','ti-sort-ascending','ti-sort-descending','active');
-            if (col === sortColumn) {
-                icon.classList.add(sortDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending', 'active');
-                icon.closest('th').classList.add('sorted-col');
-            } else {
-                icon.classList.add('ti-arrows-sort');
-            }
-        });
-    }
-
-    function initials(name) {
-        if (!name || name === '—') return '—';
-        return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0,2).join('');
-    }
-
-    function fonctionnelBadge(val) {
-        if (val === 'oui') return `<span class="badge-etat ok"><i class="ti ti-check"></i><span class="text-collapse"> Fonctionnel</span></span>`;
-        if (val === 'non') return `<span class="badge-etat ko"><i class="ti ti-x"></i><span class="text-collapse"> Non fonctionnel</span></span>`;
-        return `<span style="color:rgba(255,255,255,0.3);font-size:12px">—</span>`;
-    }
-
-    function render() {
-        const tbody    = document.getElementById('ticketBody');
-        const empty    = document.getElementById('emptyState');
-        const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
-        const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
-        const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
-        const economies = (nbOk * 0.20).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
-
-        document.getElementById('statsBar').innerHTML = `
-            <div class="stat-card"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
-            <div class="stat-card"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
-            <div class="stat-card"><div class="label">Fonctionnels</div><div class="value" style="color:#a5d6a7">${nbOk}</div></div>
-            <div class="stat-card"><div class="label">Non fonctionnels</div><div class="value" style="color:#ef9a9a">${nbKo}</div></div>
-            <div class="stat-card"><div class="label">Économies réalisées</div><div class="value" style="color:#a5d6a7">${economies}</div></div>
-        `;
-
-        majIconesTri();
-        const rows = getTicketsTries();
-        if (rows.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-        empty.style.display = 'none';
-
-        tbody.innerHTML = rows.map(({t, i}) => `
-            <tr onclick="toggleSelectRow(this)" data-index="${i}">
-                <td class="id-style" style="color:#ff8a8a">${t.id || '—'}</td>
-                <td class="suffixe-style" style="color:rgba(255,255,255,0.55)">${t.suffixe || '—'}</td>
-                <td><span class="badge-format ${formatClass(t.format)}">${t.format || '—'}</span></td>
-                <td class="contenu-style" style="color:rgba(255,255,255,0.85)">${t.contenu || '—'}</td>
-                <td>
-                    <div class="zones-cell">
-                        ${zonesDots(t.zones)}
-                        <span class="zone-label">${t.zones && t.zones !== '—' ? t.zones : '<span style="color:rgba(255,255,255,0.25)">—</span>'}</span>
-                    </div>
-                </td>
-                <td style="font-weight:600;text-align:center">${t.quantite || '—'}</td>
-                <td>
-                    <div class="emprunteur-cell">
-                        ${t.emprunteur && t.emprunteur !== '—'
-                            ? `<div class="emp-avatar">${initials(t.emprunteur)}</div><span style="color:rgba(255,255,255,0.85)">${t.emprunteur}</span>`
-                            : `<span style="color:rgba(255,255,255,0.25)">—</span>`}
-                    </div>
-                </td>
-                <td>${fonctionnelBadge(t.fonctionnel)}</td>
-                <td><button class="btn-edit" onclick="ouvrirModal(${i})"><i class="ti ti-edit"></i><span class="text-collapse"> Éditer</span></button></td>
-            </tr>
-        `).join('');
-    }
-
-    function toggleSelectRow(tr) {
-        if (event.target.closest('.btn-edit')) return;
-        const wasSelected = tr.classList.contains('selected');
-        document.querySelectorAll('#ticketBody tr.selected').forEach(r => r.classList.remove('selected'));
-        if (!wasSelected) tr.classList.add('selected');
-    }
-
-    document.getElementById('myModal').addEventListener('click', function(e) {
-        if (e.target === this) fermerModal();
+        const cmp = (va ?? '').toString().localeCompare((vb ?? '').toString(), 'fr', {numeric:true, sensitivity:'base'});
+        return sortDirection === 'asc' ? cmp : -cmp;
     });
+    return indexed;
+}
 
-    charger();
+function majIconesTri() {
+    document.querySelectorAll('.table-card thead th').forEach(th => th.classList.remove('sorted-col'));
+    document.querySelectorAll('.sort-icon').forEach(icon => {
+        const col = icon.dataset.col;
+        icon.className = 'sort-icon ti ' + (col === sortColumn
+            ? (sortDirection === 'asc' ? 'ti-sort-ascending' : 'ti-sort-descending') + ' active'
+            : 'ti-arrows-sort');
+        if (col === sortColumn) icon.closest('th').classList.add('sorted-col');
+    });
+}
+
+function initials(name) {
+    if (!name || name === '—') return '—';
+    return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
+}
+
+function fonctionnelBadge(val) {
+    if (val === 'oui') return `<span class="badge-etat ok"><i class="ti ti-check"></i><span class="text-collapse"> Fonctionnel</span></span>`;
+    if (val === 'non') return `<span class="badge-etat ko"><i class="ti ti-x"></i><span class="text-collapse"> Non fonctionnel</span></span>`;
+    return `<span style="color:var(--t4);font-size:12px">—</span>`;
+}
+
+function render() {
+    const tbody    = $('ticketBody');
+    const empty    = $('emptyState');
+    const totalQte = tickets.reduce((s, t) => s + (parseInt(t.quantite) || 0), 0);
+    const nbOk     = tickets.filter(t => t.fonctionnel === 'oui').length;
+    const nbKo     = tickets.filter(t => t.fonctionnel === 'non').length;
+    const economies = (nbOk * 0.20).toLocaleString('fr-FR', {style:'currency', currency:'EUR'});
+
+    $('statsBar').innerHTML = `
+        <div class="stat-card glass"><div class="label">Tickets</div><div class="value">${tickets.length}</div></div>
+        <div class="stat-card glass"><div class="label">Total voyages</div><div class="value">${totalQte}</div></div>
+        <div class="stat-card glass"><div class="label">Fonctionnels</div><div class="value" style="color:#a5d6a7">${nbOk}</div></div>
+        <div class="stat-card glass"><div class="label">Non fonctionnels</div><div class="value" style="color:#ef9a9a">${nbKo}</div></div>
+        <div class="stat-card glass"><div class="label">Économies réalisées</div><div class="value" style="color:#a5d6a7">${economies}</div></div>
+    `;
+
+    majIconesTri();
+    const rows = getTicketsTries();
+    if (!rows.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = rows.map(({t, i}) => `
+        <tr onclick="toggleSelectRow(this)" data-index="${i}">
+            <td class="id-style" style="color:#ff8a8a">${t.id || '—'}</td>
+            <td class="suffixe-style" style="color:rgba(255,255,255,0.55)">${t.suffixe || '—'}</td>
+            <td><span class="badge-format ${formatClass(t.format)}">${t.format || '—'}</span></td>
+            <td class="contenu-style" style="color:rgba(255,255,255,0.85)">${t.contenu || '—'}</td>
+            <td>
+                <div class="zones-cell">
+                    ${zonesDots(t.zones)}
+                    <span class="zone-label">${t.zones && t.zones !== '—' ? t.zones : '<span style="color:var(--t4)">—</span>'}</span>
+                </div>
+            </td>
+            <td style="font-weight:600;text-align:center">${t.quantite || '—'}</td>
+            <td>
+                <div class="emprunteur-cell">
+                    ${t.emprunteur && t.emprunteur !== '—'
+                        ? `<div class="emp-avatar">${initials(t.emprunteur)}</div><span style="color:rgba(255,255,255,0.85)">${t.emprunteur}</span>`
+                        : `<span style="color:var(--t4)">—</span>`}
+                </div>
+            </td>
+            <td>${fonctionnelBadge(t.fonctionnel)}</td>
+            <td><button class="btn-edit" onclick="ouvrirModal(${i})"><i class="ti ti-edit"></i><span class="text-collapse"> Éditer</span></button></td>
+        </tr>
+    `).join('');
+}
+
+function toggleSelectRow(tr) {
+    if (event.target.closest('.btn-edit')) return;
+    const wasSelected = tr.classList.contains('selected');
+    document.querySelectorAll('#ticketBody tr.selected').forEach(r => r.classList.remove('selected'));
+    if (!wasSelected) tr.classList.add('selected');
+}
+
+$('myModal').addEventListener('click', function(e) { if (e.target === this) fermerModal(); });
+
+buildDropdowns();
+charger();
 </script>
 </body>
 </html>
