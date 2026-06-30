@@ -24,7 +24,7 @@
     --border: rgba(255,255,255,0.22);
     --border-hi: rgba(255,255,255,0.45);
     --shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 0 rgba(255,255,255,0.55) inset;
-    --blur: blur(22px) saturate(160%);
+    --blur: blur(10px) saturate(140%);
     --t1: #fff;
     --t2: rgba(255,255,255,0.75);
     --t3: rgba(255,255,255,0.5);
@@ -36,8 +36,15 @@
 *,*::before,*::after{box-sizing:border-box}
 html,body{min-height:100%;margin:0;padding:0}
 
+/*
+  PERF NOTE: background-attachment:fixed combined with heavy backdrop-filter
+  blur on many overlapping elements was the main cause of slowness, since the
+  browser has to recompute the blur under a fixed image on every scroll /
+  repaint. Switched to "scroll" attachment and reduced blur radius + the
+  number of elements that use backdrop-filter at all (see comments below).
+*/
 body {
-    background: #1a1a2e url('./bg.png') center/cover no-repeat fixed;
+    background: #1a1a2e url('./bg.png') center/cover no-repeat scroll;
     color: var(--t1);
     font-family: var(--gsf);
 }
@@ -50,7 +57,7 @@ body::before {
 .page-header {
     position:sticky;top:0;z-index:100;height:68px;
     display:flex;align-items:center;gap:1rem;padding:0 1.5rem 0 0;
-    background:rgba(15,10,30,0.45);
+    background:rgba(15,10,30,0.78);
     backdrop-filter:var(--blur);
     border-bottom:0.5px solid rgba(255,255,255,0.15);
     box-shadow:0 2px 24px rgba(0,0,0,0.22);
@@ -62,20 +69,29 @@ body::before {
 
 /* Sync */
 .sync-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;
-    display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .3s;backdrop-filter:blur(8px)}
-.sync-status.idle{background:var(--glass);color:var(--t2)}
-.sync-status.saving{background:var(--glass-hi);color:var(--t1)}
+    display:flex;align-items:center;gap:5px;white-space:nowrap;transition:background .2s,color .2s}
+.sync-status.idle{background:rgba(255,255,255,0.14);color:var(--t2)}
+.sync-status.saving{background:rgba(255,255,255,0.22);color:var(--t1)}
 .sync-status.ok{background:rgba(46,125,50,0.35);color:#a5d6a7;border:0.5px solid rgba(165,214,167,0.3)}
 .sync-status.error{background:rgba(181,0,21,0.35);color:#ef9a9a;border:0.5px solid rgba(239,154,154,0.3)}
 
-/* Shared glass card */
+/* Shared glass card -- no backdrop-filter here anymore (perf), just a solid-ish fill */
 .glass{
-    background:var(--glass);
-    backdrop-filter:var(--blur);
+    background:rgba(30,24,54,0.55);
     border:0.5px solid var(--border-hi);
     box-shadow:var(--shadow);
     border-radius:14px;
 }
+
+/* Toolbar buttons (export / import) */
+.toolbar-btn{
+    background:rgba(255,255,255,0.1);
+    color:#fff;border:0.5px solid rgba(255,255,255,0.25);
+    font-weight:600;padding:.45rem 1rem;border-radius:var(--radius);
+    cursor:pointer;display:flex;align-items:center;gap:6px;
+    font-size:.85rem;transition:background .15s;white-space:nowrap;
+}
+.toolbar-btn:hover{background:rgba(255,255,255,0.2)}
 
 /* Btn add */
 .btn-add{
@@ -100,8 +116,8 @@ body::before {
 .stat-card .value{font-size:1.5rem;color:#fff;
     font-variation-settings:"wght" 692,"wdth" 125,"GRAD" 0,"ROND" 0,"slnt" -8}
 
-/* Table */
-.table-card{background:var(--glass);backdrop-filter:var(--blur);
+/* Table -- single backdrop-filter for the whole card instead of per-row/per-badge */
+.table-card{background:rgba(30,24,54,0.55);
     border:0.5px solid var(--border-hi);box-shadow:var(--shadow);
     border-radius:16px;overflow:hidden}
 .table-card table{margin:0;font-size:.875rem}
@@ -125,13 +141,13 @@ body::before {
 .table-card tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 rgba(226,0,26,0.8)}
 .table-card tbody tr.selected:hover td{background:rgba(226,0,26,0.22)}
 
-/* Badges */
+/* Badges -- removed per-badge backdrop-filter (heaviest cost: one blur layer per row per badge) */
 .badge-format{display:inline-block;padding:3px 10px;border-radius:20px;
-    font-size:11px;font-weight:600;letter-spacing:.02em;backdrop-filter:blur(8px)}
-.badge-format.rouge{background:rgba(226,0,26,0.25);color:#ff8a8a;border:0.5px solid rgba(226,0,26,0.4)}
-.badge-format.bleu{background:rgba(26,86,196,0.25);color:#90b8f8;border:0.5px solid rgba(26,86,196,0.4)}
-.badge-format.rose{background:rgba(181,0,107,0.25);color:#f48fb1;border:0.5px solid rgba(181,0,107,0.4)}
-.badge-format.orange{background:rgba(181,90,0,0.25);color:#ffcc80;border:0.5px solid rgba(181,90,0,0.4)}
+    font-size:11px;font-weight:600;letter-spacing:.02em}
+.badge-format.rouge{background:rgba(60,10,16,0.85);color:#ff8a8a;border:0.5px solid rgba(226,0,26,0.4)}
+.badge-format.bleu{background:rgba(10,24,55,0.85);color:#90b8f8;border:0.5px solid rgba(26,86,196,0.4)}
+.badge-format.rose{background:rgba(55,10,35,0.85);color:#f48fb1;border:0.5px solid rgba(181,0,107,0.4)}
+.badge-format.orange{background:rgba(55,30,5,0.85);color:#ffcc80;border:0.5px solid rgba(181,90,0,0.4)}
 .badge-format.grey{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);border:0.5px solid rgba(255,255,255,0.2)}
 
 /* Zones */
@@ -142,9 +158,9 @@ body::before {
 
 /* État badge */
 .badge-etat{display:inline-flex;align-items:center;gap:4px;
-    padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;backdrop-filter:blur(8px)}
-.badge-etat.ok{background:rgba(46,125,50,0.3);color:#a5d6a7;border:0.5px solid rgba(165,214,167,0.3)}
-.badge-etat.ko{background:rgba(181,0,21,0.3);color:#ef9a9a;border:0.5px solid rgba(239,154,154,0.3)}
+    padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-etat.ok{background:rgba(20,55,22,0.85);color:#a5d6a7;border:0.5px solid rgba(165,214,167,0.3)}
+.badge-etat.ko{background:rgba(60,10,16,0.85);color:#ef9a9a;border:0.5px solid rgba(239,154,154,0.3)}
 
 /* Edit button */
 .btn-edit{
@@ -160,11 +176,11 @@ body::before {
 
 /* Search */
 .search-wrap{
-    display:flex;align-items:center;background:var(--glass);
+    display:flex;align-items:center;background:rgba(255,255,255,0.1);
     border:0.5px solid rgba(255,255,255,0.3);border-radius:var(--radius);
-    overflow:hidden;width:220px;backdrop-filter:blur(12px);
+    overflow:hidden;width:220px;
 }
-.search-wrap:focus-within{background:var(--glass-hi);border-color:rgba(255,255,255,0.5)}
+.search-wrap:focus-within{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.5)}
 .search-icon-btn{
     background:none;border:none;color:#fff;padding:0 10px;cursor:pointer;
     display:flex;align-items:center;font-size:1rem;opacity:.8;flex-shrink:0;height:34px;
@@ -176,13 +192,13 @@ body::before {
 /* Modal */
 #myModal{
     display:none;position:fixed;inset:0;
-    background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);
+    background:rgba(0,0,0,0.6);
     z-index:1050;align-items:center;justify-content:center;
 }
 #myModal.open{display:flex}
 .modal-box{
-    background:rgba(20,15,40,0.65);
-    backdrop-filter:blur(40px) saturate(180%);
+    background:rgba(20,15,40,0.92);
+    backdrop-filter:blur(14px) saturate(140%);
     border:0.5px solid rgba(255,255,255,0.3);
     box-shadow:0 24px 64px rgba(0,0,0,0.5),0 1px 0 rgba(255,255,255,0.4) inset;
     border-radius:20px;padding:1.75rem;width:100%;
@@ -201,7 +217,7 @@ body::before {
 .form-label-sm{font-size:11px;font-weight:600;color:var(--t2);
     text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;display:block}
 .form-group{margin-bottom:1rem}
-.modal-actions{display:flex;gap:.75rem;margin-top:1.5rem;padding-top:1rem;border-top:0.5px solid rgba(255,255,255,0.12)}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.5rem;padding-top:1rem;border-top:0.5px solid rgba(255,255,255,0.12);flex-wrap:wrap}
 
 /* Shared input/btn base */
 input.form-control,
@@ -280,8 +296,7 @@ input.form-control.field-error,.custom-select-btn.field-error{border-color:rgba(
 .custom-select-btn.disabled-field{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.25);cursor:not-allowed;pointer-events:none}
 .custom-dropdown{
     position:absolute;top:calc(100% + 6px);left:0;right:0;
-    background:rgba(20,15,40,0.75);
-    backdrop-filter:blur(30px) saturate(160%);
+    background:rgba(20,15,40,0.97);
     border:0.5px solid rgba(255,255,255,0.25);border-radius:12px;
     box-shadow:0 12px 40px rgba(0,0,0,0.4),0 1px 0 rgba(255,255,255,0.3) inset;
     z-index:2000;max-height:220px;overflow-y:auto;display:none;padding:4px;
@@ -373,6 +388,13 @@ input.form-control.field-error,.custom-select-btn.field-error{border-color:rgba(
         </button>
         <input type="search" id="searchInput" class="search-input" placeholder="Suffixe, contenu…" oninput="render()">
     </div>
+    <button class="toolbar-btn" onclick="exporterJSON()" title="Télécharger une sauvegarde locale du JSON">
+        <i class="ti ti-download"></i> Exporter
+    </button>
+    <button class="toolbar-btn" onclick="document.getElementById('importFile').click()" title="Écraser les tickets actuels avec un fichier JSON">
+        <i class="ti ti-upload"></i> Importer
+    </button>
+    <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importerJSON(this.files[0])">
     <button class="btn-add" onclick="ouvrirModal()"><i class="ti ti-plus"></i> Ajouter un ticket</button>
 </div>
 
@@ -615,6 +637,50 @@ async function sauvegarderAPI() {
     } catch {
         setSync('error', 'Erreur sync');
     }
+}
+
+// ── Export / Import JSON (sauvegarde locale) ──
+function exporterJSON() {
+    const blob = new Blob([JSON.stringify(tickets, null, 2)], {type: 'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    const horodatage = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+    a.href = url;
+    a.download = `tickets-tcl-${horodatage}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
+function importerJSON(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        let data;
+        try {
+            data = JSON.parse(e.target.result);
+        } catch {
+            alert("Fichier JSON invalide.");
+            $('importFile').value = '';
+            return;
+        }
+        const liste = Array.isArray(data) ? data : (data.data || null);
+        if (!Array.isArray(liste)) {
+            alert("Le fichier ne contient pas une liste de tickets valide.");
+            $('importFile').value = '';
+            return;
+        }
+        if (!confirm(`Importer ce fichier va ÉCRASER les ${tickets.length} ticket(s) actuel(s) par les ${liste.length} ticket(s) du fichier. Continuer ?`)) {
+            $('importFile').value = '';
+            return;
+        }
+        tickets = liste;
+        await sauvegarderAPI();
+        render();
+        $('importFile').value = '';
+    };
+    reader.readAsText(file);
 }
 
 // ── Dropdowns ──
