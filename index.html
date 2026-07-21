@@ -32,7 +32,6 @@
 html,body{min-height:100%;margin:0;padding:0}
 
 body {
-    /* Background fixe corrigé : ne s'étire pas avec le scroll */
     background: var(--bg-dark) url('./bg.png') center/cover no-repeat fixed;
     color: var(--text);
     font-family: var(--gsf);
@@ -47,7 +46,6 @@ body::before {
     pointer-events:none;
 }
 
-/* Header */
 .page-header {
     position:sticky;
     top:0;
@@ -65,7 +63,6 @@ body::before {
 .header-svg-wrap svg{height:100%;width:auto;display:block}
 .page-header h1{font-size:1.05rem;font-weight:380;margin:0;letter-spacing:.01em}
 
-/* Sync */
 .sync-status{
     font-size:11px;
     font-weight:600;
@@ -81,7 +78,6 @@ body::before {
 .sync-status.ok{background:rgba(46,125,50,0.3);color:#a5d6a7}
 .sync-status.error{background:rgba(181,0,21,0.3);color:#ef9a9a}
 
-/* Buttons */
 .toolbar-btn, .btn-add {
     background:rgba(255,255,255,0.1);
     color:#fff;
@@ -97,6 +93,13 @@ body::before {
     transition:all .15s;
 }
 
+.toolbar-btn i, .btn-add i {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    vertical-align:middle;
+}
+
 .toolbar-btn:hover{background:rgba(255,255,255,0.2)}
 
 .btn-add{
@@ -107,14 +110,12 @@ body::before {
 }
 .btn-add:hover{background:#c40015}
 
-/* Content */
 .content-area{
     position:relative;
     z-index:1;
     padding:1.5rem;
 }
 
-/* Stats */
 .stats-bar{
     display:flex;
     gap:.85rem;
@@ -145,7 +146,6 @@ body::before {
     font-variation-settings:"wght" 692,"wdth" 125,"GRAD" 0,"ROND" 0,"slnt" -8;
 }
 
-/* Table */
 .table-card{
     background:var(--bg-card);
     border-radius:var(--radius);
@@ -173,7 +173,7 @@ body::before {
 .table-card thead th.no-sort{cursor:default}
 .table-card thead th.sorted-col{color:#ff6b7a}
 
-.sort-icon{margin-left:4px;font-size:13px;opacity:.35}
+.sort-icon{margin-left:4px;font-size:13px;opacity:.35;vertical-align:middle}
 .sort-icon.active{opacity:1}
 
 .table-card tbody td{
@@ -187,15 +187,16 @@ body::before {
 .table-card tbody tr.selected td{background:rgba(226,0,26,0.15)}
 .table-card tbody tr:last-child td{border-bottom:none}
 
-/* Badges */
 .badge-format{
-    display:inline-block;
+    display:inline-flex;
+    align-items:center;
     padding:3px 10px;
     border-radius:20px;
     font-size:11px;
     font-weight:600;
     background:rgba(226,0,26,0.2);
     color:#ff8a8a;
+    vertical-align:middle;
 }
 
 .badge-etat{
@@ -206,11 +207,16 @@ body::before {
     border-radius:20px;
     font-size:11px;
     font-weight:600;
+    vertical-align:middle;
+}
+.badge-etat i {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 }
 .badge-etat.ok{background:rgba(46,125,50,0.2);color:#a5d6a7}
 .badge-etat.ko{background:rgba(181,0,21,0.2);color:#ef9a9a}
 
-/* Cells */
 .zones-cell, .emprunteur-cell{
     display:flex;
     align-items:center;
@@ -222,6 +228,7 @@ body::before {
     height:10px;
     border-radius:50%;
     display:inline-block;
+    vertical-align:middle;
 }
 
 .emp-avatar{
@@ -235,6 +242,7 @@ body::before {
     display:flex;
     align-items:center;
     justify-content:center;
+    flex-shrink:0;
 }
 
 .btn-edit{
@@ -246,10 +254,18 @@ body::before {
     font-size:12px;
     cursor:pointer;
     transition:all .15s;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    vertical-align:middle;
+}
+.btn-edit i {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 }
 .btn-edit:hover{background:var(--red-dark);border-color:var(--red);color:#ff8a8a}
 
-/* Empty */
 .empty-state{
     text-align:center;
     padding:3rem 1rem;
@@ -257,7 +273,6 @@ body::before {
 }
 .empty-state i{font-size:3rem;display:block;margin-bottom:1rem}
 
-/* Search */
 .search-wrap{
     display:flex;
     align-items:center;
@@ -275,6 +290,9 @@ body::before {
     padding:0 10px;
     cursor:pointer;
     font-size:1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .search-input{
@@ -288,7 +306,6 @@ body::before {
 }
 .search-input::placeholder{color:var(--text-muted)}
 
-/* Modal */
 #myModal{
     display:none;
     position:fixed;
@@ -323,6 +340,15 @@ body::before {
     font-weight:600;
     margin:0;
     color:#ff8a8a;
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.modal-header-custom h5 i {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .modal-close{
@@ -339,7 +365,6 @@ body::before {
 }
 .modal-close:hover{background:rgba(255,255,255,0.2)}
 
-/* Form */
 .form-label-sm{
     font-size:11px;
     font-weight:600;
@@ -368,6 +393,7 @@ input.form-control, .custom-select-btn{
     padding:.55rem .85rem;
     width:100%;
     font-family: var(--gsf);
+    transition: border-color .15s, background .15s;
 }
 
 input.form-control:focus, .custom-select-btn:focus{
@@ -376,9 +402,14 @@ input.form-control:focus, .custom-select-btn:focus{
     background:rgba(255,255,255,0.08);
 }
 
-input.form-control:disabled{
+input.form-control:disabled, .custom-select-btn.disabled-field{
     opacity:0.5;
     cursor:not-allowed;
+}
+
+input.form-control.field-error, .custom-select-btn.field-error{
+    border-color: var(--red);
+    background: rgba(226,0,26,0.1);
 }
 
 #idWrapper{
@@ -388,6 +419,7 @@ input.form-control:disabled{
     border-radius:var(--radius);
     overflow:hidden;
     background:rgba(255,255,255,0.05);
+    transition: border-color .15s;
 }
 
 #idPrefixSpan{
@@ -411,6 +443,19 @@ input.form-control:disabled{
     font-variation-settings: 'slnt' 0,'wdth' 75,'GRAD' 0,'ROND' 100;
 }
 
+.btn-save, .btn-delete, .btn-cancel {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+}
+
+.btn-save i, .btn-delete i, .btn-cancel i {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+
 .btn-save{
     background:var(--red);
     color:#fff;
@@ -420,10 +465,6 @@ input.form-control:disabled{
     font-weight:700;
     flex:1;
     cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
 }
 .btn-save:hover{background:#c40015}
 
@@ -447,7 +488,6 @@ input.form-control:disabled{
 }
 .btn-cancel:hover{background:rgba(255,255,255,0.2)}
 
-/* Custom Select */
 .custom-select-wrap{position:relative}
 
 .custom-select-btn{
@@ -460,7 +500,7 @@ input.form-control:disabled{
 }
 
 .custom-select-btn.placeholder{color:var(--text-muted)}
-.custom-select-btn .chevron{font-size:14px;opacity:.5}
+.custom-select-btn .chevron{font-size:14px;opacity:.5;display:inline-flex;align-items:center;justify-content:center}
 
 .custom-dropdown{
     position:absolute;
@@ -484,6 +524,9 @@ input.form-control:disabled{
     border-radius:6px;
     cursor:pointer;
     color:var(--text);
+    display:flex;
+    align-items:center;
+    gap:7px;
 }
 .custom-dropdown-item:hover{background:rgba(255,255,255,0.1)}
 .custom-dropdown-item.selected{background:rgba(226,0,26,0.2);color:#ff8a8a}
@@ -499,7 +542,6 @@ input.form-control:disabled{
     font-weight:700;
 }
 
-/* Toggle */
 .toggle-group{
     display:flex;
     border:1px solid var(--border);
@@ -517,10 +559,25 @@ input.form-control:disabled{
     font-weight:600;
     cursor:pointer;
     color:var(--text-muted);
+    transition: all .15s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+}
+
+.toggle-group label i {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 }
 
 #fOui:checked + label{background:rgba(46,125,50,0.3);color:#a5d6a7}
 #fNon:checked + label{background:rgba(181,0,21,0.3);color:#ef9a9a}
+
+.toggle-group.field-error{
+    border-color: var(--red);
+}
 
 .row-2col{
     display:grid;
@@ -528,7 +585,6 @@ input.form-control:disabled{
     gap:.75rem;
 }
 
-/* Text styles (avec variations de police restaurées) */
 .id-style{
     color:#ff8a8a;
     font-variation-settings:"wght" 72,"wdth" 50,"GRAD" 0,"ROND" 0,"slnt" 0;
@@ -542,7 +598,6 @@ input.form-control:disabled{
     font-variation-settings:"slnt" 0,"wdth" 70,"GRAD" 0,"ROND" 0;
 }
 
-/* Responsive */
 @media(max-width:860px){
     .search-wrap{width:36px}
     .search-wrap:focus-within{width:180px}
@@ -570,7 +625,7 @@ input.form-control:disabled{
             </g>
         </svg>
     </div>
-    <h1>Gestion des tickets</h1>
+    <h1><i class="ti ti-ticket" style="vertical-align:middle;margin-right:8px"></i>Gestion des tickets</h1>
     <div id="syncStatus" class="sync-status idle"><i class="ti ti-cloud"></i> <span>Synchronisé</span></div>
     <div class="search-wrap">
         <button class="search-icon-btn" onclick="document.getElementById('searchInput').focus()" tabindex="-1">
@@ -617,7 +672,7 @@ input.form-control:disabled{
         <input type="hidden" id="editIndex">
 
         <div class="form-group">
-            <label class="form-label-sm">Numéro de ticket <span id="idCounter">(0/12 chiffres)</span></label>
+            <label class="form-label-sm">Numéro de ticket <span id="idCounter" style="font-weight:400;color:var(--text-muted);letter-spacing:0;text-transform:none">(0/12 chiffres)</span></label>
             <div id="idWrapper">
                 <span id="idPrefixSpan">06-14988599</span>
                 <input type="text" id="mIdSuffix" placeholder="000000000000" maxlength="12" oninput="onIdInput(this)">
@@ -667,7 +722,7 @@ input.form-control:disabled{
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label-sm">Quantité <span id="qteRequired" style="color:#ff8a8a;display:none">*</span></label>
+                <label class="form-label-sm">Quantité</label>
                 <input type="number" id="mQte" placeholder="ex. 10" class="form-control" min="1">
                 <div id="qteError" style="font-size:11px;color:#ff8a8a;margin-top:6px;display:none">Quantité requise</div>
             </div>
@@ -680,17 +735,18 @@ input.form-control:disabled{
 
         <div class="form-group">
             <label class="form-label-sm">Fonctionnel</label>
-            <div class="toggle-group">
+            <div class="toggle-group" id="toggleGroup">
                 <input type="radio" name="mFonctionnel" id="fOui" value="oui">
                 <label for="fOui"><i class="ti ti-check"></i> Fonctionnel</label>
                 <input type="radio" name="mFonctionnel" id="fNon" value="non">
                 <label for="fNon"><i class="ti ti-x"></i> Non fonctionnel</label>
             </div>
+            <div id="foncError" style="font-size:11px;color:#ff8a8a;margin-top:6px;display:none">Veuillez sélectionner une option</div>
         </div>
 
         <div class="modal-actions">
             <button class="btn-save" onclick="sauvegarder()"><i class="ti ti-device-floppy"></i> Enregistrer</button>
-            <button id="btnSupp" class="btn-delete" onclick="supprimer()" style="display:none"><i class="ti ti-trash"></i> Supprimer</button>
+            <button id="btnSupp" class="btn-delete" onclick="confirmerSuppression(event)" style="display:none"><i class="ti ti-trash"></i> Supprimer</button>
             <button class="btn-cancel" onclick="fermerModal()">Annuler</button>
         </div>
     </div>
@@ -883,6 +939,7 @@ function selectOption(name, value) {
         lbl.textContent = value || 'Sélectionner…';
     }
     btn.classList.toggle('placeholder', !value);
+    btn.classList.remove('field-error');
     drop.querySelectorAll('.custom-dropdown-item').forEach((el, idx) => {
         if (idx === 0) return;
         el.classList.toggle('selected', el.textContent.trim() === value && !!value);
@@ -901,7 +958,7 @@ const setDropdownDisabled = (name, disabled, displayValue) => {
         btn.classList.add('disabled-field');
         inp.value = displayValue ?? '—';
         lbl.textContent = displayValue ?? '—';
-        btn.classList.remove('placeholder');
+        btn.classList.remove('placeholder', 'field-error');
         $('drop'+name).classList.remove('open');
     } else {
         btn.classList.remove('disabled-field');
@@ -920,11 +977,13 @@ function onContenuChange(value) {
     setDropdownDisabled('Zones', isVide || isInconnu, '—');
     const qteInp = $('mQte');
     if (isVide) {
-        qteInp.value = '0'; qteInp.disabled = true; $('qteRequired').style.display = 'none';
+        qteInp.value = '0'; qteInp.disabled = true;
+        qteInp.classList.remove('field-error');
     } else if (isInconnu) {
-        qteInp.value = '—'; qteInp.disabled = true; $('qteRequired').style.display = 'none';
+        qteInp.value = '—'; qteInp.disabled = true;
+        qteInp.classList.remove('field-error');
     } else {
-        qteInp.disabled = false; $('qteRequired').style.display = 'inline';
+        qteInp.disabled = false;
         if (qteInp.value === '0' || qteInp.value === '—') qteInp.value = '';
     }
 }
@@ -933,6 +992,8 @@ function setNonFoncMode(isNon) {
     const qteInp = $('mQte');
     const mContenu = $('mContenu');
     const mZones = $('mZones');
+    $('toggleGroup').classList.remove('field-error');
+    $('foncError').style.display = 'none';
     if (isNon) {
         mContenu.dataset.prev = mContenu.value;
         mZones.dataset.prev = mZones.value;
@@ -940,7 +1001,7 @@ function setNonFoncMode(isNon) {
         setDropdownDisabled('Contenu', true, '—');
         setDropdownDisabled('Zones', true, '—');
         qteInp.value = '—'; qteInp.disabled = true;
-        $('qteRequired').style.display = 'none';
+        qteInp.classList.remove('field-error');
     } else {
         setDropdownDisabled('Contenu', false);
         setDropdownDisabled('Zones', false);
@@ -965,6 +1026,7 @@ function onIdInput(el) {
     errEl.style.display = err ? 'block' : 'none';
     errEl.textContent = err ? '12 chiffres requis' : '';
     $('idWrapper').style.borderColor = err ? 'var(--red)' : 'var(--border)';
+    $('idWrapper').classList.toggle('field-error', err);
     const full = PREFIX + el.value;
     $('mId').value = full;
     const s = full.length >= 23 ? full.slice(17, 23) : (full.length > 17 ? full.slice(17) : '');
@@ -980,12 +1042,16 @@ function resetModal() {
     $('mSuffixeDisplay').textContent = '—';
     $('idError').style.display = 'none';
     $('idWrapper').style.borderColor = 'var(--border)';
+    $('idWrapper').classList.remove('field-error');
     const qteInp = $('mQte');
     qteInp.value = ''; qteInp.disabled = false;
+    qteInp.classList.remove('field-error');
     $('qteError').style.display = 'none';
-    $('qteRequired').style.display = 'none';
     $('mEmp').value = '';
+    $('mEmp').classList.remove('field-error');
     document.querySelectorAll('input[name="mFonctionnel"]').forEach(r => r.checked = false);
+    $('toggleGroup').classList.remove('field-error');
+    $('foncError').style.display = 'none';
     setDropdownDisabled('Contenu', false); setDropdownValue('Contenu', '');
     setDropdownDisabled('Zones', false); setDropdownValue('Zones', '');
     setDropdownValue('Format', '');
@@ -1034,43 +1100,135 @@ function fermerModal() {
     closeAllDropdowns(null);
 }
 
+function confirmerSuppression(event) {
+    // Si Shift n'est pas maintenu, afficher une confirmation
+    if (!event.shiftKey) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?\n\nMaintenez Shift + clic pour supprimer sans confirmation.')) {
+            return;
+        }
+    }
+    supprimer();
+}
+
 function sauvegarder() {
     let hasError = false;
+    let firstErrorEl = null;
+
+    // 1. Validation ID
     const varPart = $('mIdSuffix').value;
+    const idWrapper = $('idWrapper');
     const idError = $('idError');
 
     if (varPart.length !== VAR_LEN) {
         idError.textContent = '12 chiffres requis';
         idError.style.display = 'block';
-        $('idWrapper').style.borderColor = 'var(--red)';
+        idWrapper.style.borderColor = 'var(--red)';
+        idWrapper.classList.add('field-error');
         hasError = true;
+        if (!firstErrorEl) firstErrorEl = idWrapper;
+    } else {
+        idError.style.display = 'none';
+        idWrapper.style.borderColor = 'var(--border)';
+        idWrapper.classList.remove('field-error');
     }
+
     const editIndex = parseInt($('editIndex').value);
     const fullId = $('mId').value;
     const doublon = tickets.findIndex((t, i) => t.id === fullId && i !== editIndex);
     if (doublon !== -1) {
         idError.textContent = `Ce numéro existe déjà`;
         idError.style.display = 'block';
+        idWrapper.style.borderColor = 'var(--red)';
+        idWrapper.classList.add('field-error');
         hasError = true;
+        if (!firstErrorEl) firstErrorEl = idWrapper;
     }
-    const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
-    const isNon = fonctionnel === 'non';
+
+    // 2. Validation Format
+    const format = $('mFormat').value;
+    const btnFormat = $('btnFormat');
+    if (!format) {
+        btnFormat.classList.add('field-error');
+        hasError = true;
+        if (!firstErrorEl) firstErrorEl = btnFormat;
+    } else {
+        btnFormat.classList.remove('field-error');
+    }
+
+    // 3. Validation Contenu
     const contenu = $('mContenu').value;
-    if (!isNon && contenu !== 'Vide' && contenu !== 'Inconnu') {
-        const qte = $('mQte').value.trim();
-        const qteOk = qte && !isNaN(qte) && parseInt(qte) >= 1;
-        $('qteError').style.display = qteOk ? 'none' : 'block';
-        if (!qteOk) hasError = true;
+    const btnContenu = $('btnContenu');
+    const isContenuDisabled = btnContenu.classList.contains('disabled-field');
+    if (!isContenuDisabled && !contenu) {
+        btnContenu.classList.add('field-error');
+        hasError = true;
+        if (!firstErrorEl) firstErrorEl = btnContenu;
+    } else {
+        btnContenu.classList.remove('field-error');
     }
-    if (hasError) return;
+
+    // 4. Validation Zones
+    const zones = $('mZones').value;
+    const btnZones = $('btnZones');
+    const isZonesDisabled = btnZones.classList.contains('disabled-field');
+    if (!isZonesDisabled && !zones) {
+        btnZones.classList.add('field-error');
+        hasError = true;
+        if (!firstErrorEl) firstErrorEl = btnZones;
+    } else {
+        btnZones.classList.remove('field-error');
+    }
+
+    // 5. Validation Quantité
+    const qteInp = $('mQte');
+    const qteError = $('qteError');
+    const isQteDisabled = qteInp.disabled;
+    if (!isQteDisabled) {
+        const qte = qteInp.value.trim();
+        const qteOk = qte && !isNaN(qte) && parseInt(qte) >= 1;
+        qteError.style.display = qteOk ? 'none' : 'block';
+        qteInp.classList.toggle('field-error', !qteOk);
+        if (!qteOk) {
+            hasError = true;
+            if (!firstErrorEl) firstErrorEl = qteInp;
+        }
+    } else {
+        qteError.style.display = 'none';
+        qteInp.classList.remove('field-error');
+    }
+
+    // Emprunteur : non obligatoire, pas de validation
+
+    // 6. Validation Fonctionnel
+    const fonctionnel = document.querySelector('input[name="mFonctionnel"]:checked')?.value || '';
+    const toggleGroup = $('toggleGroup');
+    const foncError = $('foncError');
+    if (!fonctionnel) {
+        toggleGroup.classList.add('field-error');
+        foncError.style.display = 'block';
+        hasError = true;
+        if (!firstErrorEl) firstErrorEl = toggleGroup;
+    } else {
+        toggleGroup.classList.remove('field-error');
+        foncError.style.display = 'none';
+    }
+
+    if (hasError) {
+        if (firstErrorEl) {
+            firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+    }
+
+    const isNon = fonctionnel === 'non';
     const empRaw = $('mEmp').value.trim();
     const ticket = {
         id: fullId,
         suffixe: $('mSuffixe').value,
-        format: $('mFormat').value,
+        format: format,
         contenu: isNon ? '—' : contenu,
-        zones: isNon ? '—' : $('mZones').value,
-        quantite: isNon ? '—' : $('mQte').value,
+        zones: isNon ? '—' : zones,
+        quantite: isNon ? '—' : qteInp.value,
         emprunteur: empRaw || '—',
         fonctionnel
     };
