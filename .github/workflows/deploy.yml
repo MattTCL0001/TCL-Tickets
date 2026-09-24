@@ -49,8 +49,12 @@ jobs:
 
             const filePath = path.join('site', 'index.html'); // adapte le nom du fichier si différent
             let html = fs.readFileSync(filePath, 'utf8');
+
+            if (!html.includes('__SAFETYPASSCODE__')) throw new Error('Placeholder __SAFETYPASSCODE__ introuvable dans le fichier !');
+            if (!html.includes('__NFCACCESS__')) throw new Error('Placeholder __NFCACCESS__ introuvable dans le fichier !');
+
             html = html.replace('__SAFETYPASSCODE__', passHash);
-            html = html.replace('__NFCACESS__', nfcHash);
+            html = html.replace('__NFCACCESS__', nfcHash);
             fs.writeFileSync(filePath, html);
 
             console.log('Placeholders remplacés avec succès.');
