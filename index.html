@@ -708,7 +708,7 @@ si.addEventListener('input',()=>{majSearching();clearTimeout(st);st=setTimeout(r
 
 /* ---------- Accès : mot de passe OU carte NFC ----------
    Empreintes injectées au déploiement (GitHub Actions) depuis les secrets SafetyPassCode et NFCacess. */
-const AUTH={pass:'__SAFETY_PASSCODE_HASH__',nfc:'__NFC_ACCESS_HASH__'}, AUTH_SALT='gestion-tcl-v1';
+const AUTH={pass:'__SAFETYPASSCODE__',nfc:'__NFCACCESS__'}, AUTH_SALT='gestion-tcl-v1';
 let started=false, nfcAbort=null, echecs=0;
 
 async function derive(v){
