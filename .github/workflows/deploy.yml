@@ -1,0 +1,69 @@
+name: Déployer sur GitHub Pages
+
+on:
+  push:
+    branches: [main]     # adapte au nom de ta branche si besoin
+  workflow_dispatch:      # permet de relancer manuellement depuis l'onglet Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Préparer un dossier de sortie
+        run: |
+          mkdir -p site
+          cp -r * site/ 2>/dev/null || true
+          rm -rf site/.github site/site
+
+      - name: Calculer les hashes et remplacer les placeholders
+        env:
+          SAFETY_PASS_CODE: ${{ secrets.SAFETYPASSCODE }}
+          NFC_ACCESS: ${{ secrets.NFCACESS }}
+        run: |
+          node -e "
+            const crypto = require('crypto');
+            const fs = require('fs');
+            const path = require('path');
+
+            function derive(value) {
+              return crypto.pbkdf2Sync(value, 'gestion-tcl-v1', 200000, 32, 'sha256').toString('hex');
+            }
+
+            const passHash = derive('pass:' + process.env.SAFETY_PASS_CODE);
+            const nfcHash  = derive('nfc:' + process.env.NFC_ACCESS);
+
+            const filePath = path.join('site', 'index.html'); // adapte le nom du fichier si différent
+            let html = fs.readFileSync(filePath, 'utf8');
+            html = html.replace('__SAFETYPASSCODE__', passHash);
+            html = html.replace('__NFCACESS__', nfcHash);
+            fs.writeFileSync(filePath, html);
+
+            console.log('Placeholders remplacés avec succès.');
+          "
+
+      - name: Configurer Pages
+        uses: actions/configure-pages@v4
+
+      - name: Uploader l'artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Déployer
+        id: deployment
+        uses: actions/deploy-pages@v4
